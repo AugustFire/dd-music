@@ -144,6 +144,7 @@ public class ExamPaperQuestionServiceImpl implements ExamPaperQuestionService {
 		examPaperService.save(examPaper);
 		if (knowledges.isEmpty()) {
 			if (singleNum > 0) {
+				// 根据条件查询试卷问题Id
 				List<Question> questions = questionService.random(QuestionType.SINGLE_SELECT, grade, singleNum, null);
 				List<String> ids = null;
 				if (null != questions && !questions.isEmpty()) {
