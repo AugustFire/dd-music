@@ -1,0 +1,90 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorator="layout">
+<head>
+	<meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<title>授权管理</title>
+</head>
+<body>
+	<div layout:fragment="content">
+		<div class="pull-left main-content">
+			<div class="content-item">
+				<p class="title">授权管理&nbsp;&nbsp;&nbsp;<a class="layui-btn layui-btn-small del-btn" th:href="@{/authorize}">添加授权</a></p>
+				<form class="layui-form search-form" th:action="@{/authorizes}">
+					<div class="layui-form-item">
+						<div class="layui-inline">
+							<label class="layui-form-label">专题：</label>
+							<div class="layui-input-inline">
+								<input type="tel" name="title" th:value="${title}" lay-verify="name" autocomplete="off" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-inline">
+							<label class="layui-form-label">科目类型：</label>
+							<div class="layui-input-inline">
+								<!--<input type="tel" name="subjectType" th:value="${subjectType}" lay-verify="name" autocomplete="off" class="layui-input">-->
+								<select class="form-control" name="subjectType">
+									<option value="0"></option>
+									<option value="1">乐理</option>
+									<option value="3">听音</option>
+									<option value="2">视唱</option>
+								</select>
+							</div>
+						</div>
+						<div class="layui-inline">
+							<label class="layui-form-label">被授权人姓名：</label>
+							<div class="layui-input-inline">
+								<input type="tel" name="name" th:value="${name}" lay-verify="name" autocomplete="off" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-inline">
+							<label class="layui-form-label">被授权人账号：</label>
+							<div class="layui-input-inline">
+								<input type="tel" name="login" th:value="${login}" lay-verify="name" autocomplete="off" class="layui-input">
+							</div>
+						</div>
+						<button class="btn" type="submit">查询</button>
+					</div>
+				</form>
+				<table class="layui-table" lay-skin="line">
+					<colgroup>
+						<col>
+						<col width="150">
+						<col width="150">
+						<col width="150">
+						<col width="120">
+						<col width="120">
+						<col width="150">
+					</colgroup>
+					<thead>
+						<tr>
+							<th>专题</th>
+							<th>科目类型</th>
+							<th>被授权人姓名</th>
+							<th>被授权人账号</th>
+							<th>授权时间</th>
+							<th>操作人员</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:if="${authorizes != null}" th:each="authorize : ${authorizes}">
+							<td th:text="${authorize.topic.title}"></td>
+							<td th:text="${1==authorize.topic.subjectType?'乐理':2==authorize.topic.subjectType?'视唱':3==authorize.topic.subjectType?'听音':''}"></td>
+							<td th:text="${authorize.toAuthorizer.name}"></td>
+							<td th:text="${authorize.toAuthorizer.email}"></td>
+							<td th:text="${#calendars.format(authorize.creatAt,'yyyy-MM-dd')}"></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr th:if="${#lists.isEmpty(authorizes)}">
+							<td colspan="7" th:text="暂无数据"></td>
+						</tr>
+					</tbody>
+				</table>
+				
+				<div th:include="page :: pager(${authorizes})" th:remove="tag"></div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

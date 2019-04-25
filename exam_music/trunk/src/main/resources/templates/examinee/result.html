@@ -1,0 +1,64 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>我的报名</title>
+<link rel="stylesheet" th:href="@{/css/session/reset.css}">
+<link rel="stylesheet" th:href="@{/css/session/info.css}">
+</head>
+<body>
+	<div class="wrap">
+		<div class="header-wrap">
+			<div class="content clearfix">
+				<img th:src="@{/images/logo.png}" height="25" width="266" alt="" class="pull-left">
+				<ul class="pull-left list">
+					<li><a th:href="@{/examinee}">个人信息</a></li>
+					<li><a th:href="@{/enrollment}">我的报名</a></li>
+					<li><a th:href="@{/myResult}" class="curr">我的成绩</a></li>
+					<li><a th:href="@{/session}">安全退出</a></li>
+				</ul>
+			</div>
+		</div>
+		<div class="content main-content">
+			<p class="title">
+				<img th:src="@{/images/editicon.jpg}" height="27" width="35" alt="">
+				<span>我的成绩</span>
+			</p>
+			<div class="item">
+				<span>考试名称：</span>
+				<input type="text" th:value="${exam.title}" readonly />
+			</div>
+			<div class="item">
+				<span>考试时间：</span>
+				<input type="text" th:value="${#calendars.format(exam.startAt,'yyyy-MM-dd HH:mm:ss')}" readonly />
+			</div>
+			<div class="item">
+				<span>结束时间：</span>
+				<input type="text" th:value="${#calendars.format(exam.endAt,'yyyy-MM-dd HH:mm:ss')}" readonly />
+			</div>
+			<span th:if="${exam==null}">考试暂未开始报名</span>
+
+			<div class="item" th:each="result : ${results}">
+				<span th:if="${1 == result.examPaper.subjectType}" th:text="${result.examPaper.title}+ ':'"></span>
+				<span th:if="${2 == result.examPaper.subjectType}" th:text="${result.examPaper.title}+ ':'"></span>
+				<span th:if="${3 == result.examPaper.subjectType}" th:text="${result.examPaper.title}+ ':'"></span>
+				<input th:if="${1 == result.examPaper.subjectType}" type="text" th:value="${result.score}+'分'+'(权重：'+${weightMap['1']}+'%)'" readonly />
+				<input th:if="${2 == result.examPaper.subjectType}" type="text" th:value="${result.score}+'分'+'(权重：'+${weightMap['2']}+'%)'" readonly />
+				<input th:if="${3 == result.examPaper.subjectType}" type="text" th:value="${result.score}+'分'+'(权重：'+${weightMap['3']}+'%)'" readonly />
+			</div>
+			<div th:if="${results != null && !#lists.isEmpty(results)}" class="item">
+				<span>综合成绩：</span>
+				<input type="text" th:value="${total_score}+'分'" readonly />
+			</div>
+		</div>
+		<div class="footer">
+			<p>
+				Copyright © 2016-2017 武汉华大国家数字化学习工程技术有限公司 All rights reserved.<img th:src="@{/images/ghs.png}" alt="">鄂公网安备 42018502000888号&nbsp;&nbsp;鄂ICP备16017888号
+			</p>
+		</div>
+	</div>
+<script th:src="@{/js/lib/jquery-3.2.0.min.js}"></script>
+<script th:src="@{/js/lib/rails.js}"></script>
+</body>
+</html>

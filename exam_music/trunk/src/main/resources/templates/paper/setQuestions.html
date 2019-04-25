@@ -1,0 +1,91 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorator="layout">
+<head>
+	<meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<title>考题设置</title>
+</head>
+<body>
+	
+	<div layout:fragment="content">
+		<div class=" pull-left main-content">
+			<div class="content-item">
+				<p class="title"><a class="goback" title="返回" href="javascript:history.back();" ></a>考题设置</p>
+				<div class="paper-title">
+					考卷名称：<span th:text="${examPaper.title}"></span>
+					考卷年度：<span th:text="${examPaper.year}"></span>
+					考卷分数：<span th:text="${examPaper.score}"></span>
+					<div style="display:none">考卷id：<span th:text="${examPaper.id}" id="examid"></span></div>
+				</div>
+				<!-- <object id="view" classid="clsid:BD6FCFAF-7E9F-4491-85B8-1295B5D2F438"></object>
+				<input type="button" onclick="javascript:OpenActiveX();" value="can"> -->
+
+			<div class="search-form" id="topic-selection">
+				<button type="button"  data-id="1" class="btn gray">单选题</button>
+				<button type="button" data-id="2" class="btn gray">多选题</button>
+				<button type="button"  data-id="3" class="btn gray">简答题</button>
+				<button type="button" data-id="4" class="btn gray">视唱题</button>
+
+			</div>
+				
+				<table class="layui-table" lay-skin="line">
+					<colgroup>
+						<col width="100">
+						<col width="">
+						<col width="">
+						<col>
+					</colgroup>
+					<thead>
+						<tr data-id="checkall">
+							<th>选项</th>
+							<th>考试题目</th>
+							<th>难度系数</th>
+						</tr>
+					</thead>
+
+					<tbody id="type-list">
+
+					</tbody> 
+	
+				</table>
+				</div>			
+			<script type="text/html" id="list">
+				{{each questions as item i}}
+					<tr data-id={{item.id}}>
+						<td><input type="checkbox" /></td>
+						<td>{{item.title}}</td>
+						<td>{{item.difficulty}}</td>
+					</tr>
+				{{/each}}
+			</script>
+			<div id="hidden">
+				<input type="hidden" data-id="1" />
+				<input type="hidden" data-id="2" />
+				<input type="hidden" data-id="3" />
+				<input type="hidden" data-id="4" />
+			</div>
+			<div id="pagination" class="M-box"></div>
+			<button class="btn" id="submit-btn">提交</button>	
+			</div>
+	<script th:src="@{/js/lib/jquery.pagination.js}"></script>
+	<script th:src="@{/js/lib/template-web.js}"></script>
+	<script th:src="@{/js/lib/jquery.museum.js}"></script>		
+	<script th:src="@{/js/modules/exam_questions.js}"></script>
+	<script language="javascript">
+	
+        //Passing parameters to ActiveX object
+        function OpenActiveX() {
+            try {
+                document.view.XmlPathParam = "d:\\aa.xml";
+                window.alert(document.view.XmlPathParam);
+                document.view.Open();
+            }
+            catch (Err) {
+                alert(Err.description);
+            }
+        }
+    </script>
+		</div>
+
+</body>
+</html>

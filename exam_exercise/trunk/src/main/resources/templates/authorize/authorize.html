@@ -1,0 +1,92 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorator="layout">
+<head>
+	<meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<title>添加授权</title>
+</head>
+<body>
+	<div layout:fragment="content">
+		<div class="pull-left main-content">
+			<div class="content-item">
+				<p class="title"><a class="goback" title="返回" href="javascript:history.back();" ></a>添加授权</p>
+				<form class="layui-form mg30" th:action="@{/authorize}" method="post" autocomplete="off" >
+					<div class="layui-form-item">
+						<div class="layui-inline">
+							<label class="layui-form-label">专题：</label>
+							<div class="layui-input-inline">
+								<input type="text" name="topics" class="layui-input" data-toggle="modal" data-target="#Modal" id="topics-ip" readonly="readonly" />
+								<input type="hidden" name="topicId" />
+							</div>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<div class="layui-inline">
+							<label class="layui-form-label">练习者：</label>
+							<div class="layui-input-inline">
+								<input type="text" name="practicer" class="layui-input"  data-toggle="modal" data-target="#Modal"  id="practicer-ip" readonly="readonly"/>
+								<input type="hidden" name="toAuthorizerId" />
+							</div>
+						</div>
+					</div>
+					<div class="layui-form-item top30">
+						<label class="layui-form-label"></label>
+						<div class="layui-input-inline">
+							<button class="btn" type="submit">提交</button>
+						</div>
+						
+					</div>
+				</form>
+
+				<!-- 模态框（Modal） -->
+				<div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+					<div class="modal-dialog" style="width:60%;">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+									&times;
+								</button>
+								<h4 class="modal-title" id="myModalLabel">
+									授权管理
+								</h4>
+							</div>
+							<div class="modal-body">
+								<div class="layui-form">
+									<div class="layui-input-inline clearfix">
+										<div class="pull-right">
+											<input type="text" class="layui-input pull-left"  style="width:250px;"/>
+											<button class="seach-p-btn layui-btn pull-left">搜索</button>
+										</div>
+									</div>
+								  <table class="layui-table" lay-skin="line">
+								    <colgroup>
+								      <col width="70">
+								      <col>
+								    </colgroup>
+								    <thead id="a-thead">
+								    </thead>
+								    <tbody id="a-list">
+										
+								    </tbody>
+								  </table>
+								</div>
+							</div>
+							
+							
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default" data-dismiss="modal">关闭
+								</button>
+								<button type="button" class="btn btn-primary">
+									提交
+								</button>
+							</div>
+						</div><!-- /.modal-content -->
+					</div><!-- /.modal -->
+					<script th:src="@{/js/lib/jquery.pagination.js}"></script>								
+					<script th:src="@{/js/modules/topic.js}"></script>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

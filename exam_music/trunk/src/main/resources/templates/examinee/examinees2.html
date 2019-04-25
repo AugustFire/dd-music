@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<title>考生管理</title>
+</head>
+<body>
+	<table class="layui-table" lay-skin="line">
+		<colgroup>
+			<col width="70">
+			<col width="100">
+			<col width="150">
+			<col width="80">
+			<col width="150">
+			<col width="200">
+			<col width="">
+			<col width="90">
+			<col width="90">
+			<col width="200">
+		</colgroup>
+		<thead>
+			<tr>
+				<th>选项</th>
+				<th>姓名</th>
+				<th>身份证</th>
+				<th>准考证</th>
+				<th>电话</th>
+				<th>学校</th>
+				<th>邮箱</th>
+				<th>年龄</th>
+				<th>性别</th>
+				<th>所在分组</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:if="${examinees!=null}" th:each="examinee : ${examinees}" th:data-id="${examinee.id}">
+				<td><input type="checkbox" /></td>
+				<td th:text="${examinee.person.name}"></td>
+				<td th:text="${examinee.idcard}"></td>
+				<td th:text="${examinee.examNo}"></td>
+				<td th:text="${examinee.person.phone}"></td>
+				<td th:text="${examinee.school}"></td>
+				<td th:text="${examinee.person.email}"></td>
+				<td th:text="${examinee.person.age}"></td>
+				<td th:text="${examinee.person.gender.desc}"></td>
+				<td th:if="${examinee.group!=null}" th:text="${examinee.group.title}"></td>
+				<td th:if="${examinee.group==null}"></td>
+			</tr>
+			<tr th:if="${#lists.isEmpty(examinees)}">
+				<td colspan="9" th:text="暂无数据"></td>
+			</tr>
+		</tbody>
+	</table>
+	<div class="mt20 pull-left" style="margin-right:30px;">
+		<button class="btn blur" id="all-check">全部选中</button>
+	</div>
+	<div th:include="page :: pager(${examinees})" th:remove="tag"></div>
+</body>
+</html>

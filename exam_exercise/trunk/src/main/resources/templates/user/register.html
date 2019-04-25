@@ -1,0 +1,78 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" th:href="@{/css/layui/css/layui.css}" />
+<link rel="stylesheet" th:href="@{/css/session/reset.css}">
+<link rel="stylesheet" th:href="@{/css/session/style.css}">
+<link rel="stylesheet" th:href="@{/css/session/login.css}">
+<title>用户注册</title>
+</head>
+<body>
+	<div class="wrap-login">
+		<div class="login">
+			<div class="layui-tab-content">
+				<form th:action="@{/register}" method="post" id="res_form" class="user_form layui-form">
+				<div class="content-wrap register">
+					<div class="content">
+					<p class="title">用户注册</p>
+					<div class="layui-form-item">
+						<label class="layui-form-label pull-left">绑定邮箱：</label>
+						<div class="layui-input-block pull-left">
+							<input name="email" id="email" lay-verify="email"  autocomplete="off" class="layui-input" type="text"/>
+							<button class="layui-btn layui-btn-primary2" type="button" id="send_email">发送验证码</button>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label pull-left">邮箱验证码：</label>
+						<div class="layui-input-block pull-left">
+							<input id="code" type="code" name="code" lay-verify="required"  class="layui-input" />
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">真实姓名：</label>
+						<div class="layui-input-block">
+							<input name="username"  lay-verify="required" autocomplete="off" id="user" class="layui-input" type="text">
+							<span class="error" th:text="${warning}"></span>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">密码：</label>
+						<div class="layui-input-block">
+							<input id="password" type="password" name="password" lay-verify="required" autoComplete="off"  class="layui-input"/>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">确认密码：</label>
+						<div class="layui-input-block">
+							<input id="repassword" type="password" name="repassword" lay-verify="required" class="layui-input"  autoComplete="off" />
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label"></label>
+						<div class="layui-input-block">
+							<button type="submit" class="btn save-btn">注&nbsp;&nbsp;册</button>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label"></label>
+						<div class="layui-input-block link">
+							<a th:href="@{/session}">登录</a>
+						</div>
+					</div>
+					<div class="link">
+						<div class="error-msg" th:text="${warning}"></div>
+						<div class="error-text" th:text="${examinee}" style="display: none;"></div>
+					</div>
+					</div></div>
+				</form>
+			</div>
+		</div>
+	<script th:src="@{/js/lib/jquery-3.2.0.min.js}"></script>
+	<script th:src="@{/js/lib/jquery.validate.min.js}"></script>
+	<script th:src="@{/js/modules/register.js}"></script>
+	<script th:src="@{/css/layui/layui.js}"></script>
+	</div>
+</body>
+</html>

@@ -1,0 +1,37 @@
+package com.nercl.music.websocket;
+
+public enum MessageType {
+
+	CHAT,
+
+	USER_JOINED,
+
+	USER_LOGOUT,
+	
+	TEACHER_LOGOUT,
+	
+	TEACHER_CONNECTED,
+	
+	TEACHER_LOGIN_AT_OTHER,
+
+	NOTICE,
+
+	TASK,
+
+	FORBIDEN_WORD,
+
+	IMAGE,
+
+	DOWNLOAD_QUESTION,
+
+	STAFF,
+
+	WB,
+
+	DRUM,
+
+	REMOVE,
+
+	FEEDBACK;
+
+}

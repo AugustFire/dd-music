@@ -1,0 +1,84 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorator="layout">
+<head>
+	<meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<title>专题管理</title>
+</head>
+<body>
+	<div layout:fragment="content">
+		<div class="pull-left main-content">
+			<div class="content-item">
+				<p class="title">专题管理&nbsp;&nbsp;&nbsp;<a class="layui-btn layui-btn-small del-btn" th:href="@{/topic}">添加专题</a></p>
+				<form class="layui-form search-form" th:action="@{/topics}">
+					<div class="layui-form-item">
+						<div class="layui-inline">
+							<label class="layui-form-label">专题名称：</label>
+							<div class="layui-input-inline">
+								<input type="tel" name="title" th:value="${title}" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-inline">
+							<label class="layui-form-label">科目类型：</label>
+							<div class="layui-input-inline">
+								<!--<input type="tel" name="subjectType" th:value="${subjectType}" class="layui-input">-->
+								<select class="form-control" name="subjectType">
+									<option value="0"></option>
+									<option value="1">乐理</option>
+									<option value="3">听音</option>
+									<option value="2">视唱</option>
+								</select>
+							</div>
+						</div>
+						<button class="btn" type="submit">查询</button>
+					</div>
+				</form>
+				<table class="layui-table" lay-skin="line" id="topic-table">
+					<colgroup></colgroup>
+					<colgroup width="110"></colgroup>
+					<colgroup width="100"></colgroup>
+					<colgroup width="80"></colgroup>
+					<colgroup width="90"></colgroup>
+					<colgroup width=""></colgroup>
+					<colgroup width="220"></colgroup>
+					<thead>
+						<tr>
+							<th>专题名称</th>
+							<th>科目类型</th>
+							<th>年份</th>
+							<th>地区</th>
+							<th>费用</th>
+							<th>主题/标签</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:if="${topics != null}" th:each="topic : ${topics}" th:data-id="${topic.id}">
+							<td th:text="${topic.title}"></td>
+							<td th:text="${1==topic.subjectType?'乐理':2==topic.subjectType?'视唱':3==topic.subjectType?'听音':''}"></td>
+							<td th:text="${topic.year}"></td>
+							<td th:text="${topic.area}"></td>
+							<td th:text="${topic.fee}"></td>
+							<td th:text="${subjects['__${topic.id}__']}"></td>
+							<td>
+								<a class="layui-btn layui-btn-small" th:href="@{'/topic/'+${topic.id}}">编辑</a>
+								<a class="layui-btn layui-btn-small del-topic" href="###"  th:data-id="${topic.id}">删除</a>
+								<button data-method="offset" data-type="auto" class="layui-btn layui-btn-small topic-btn" th:data-Type="${topic.subjectType}" th:data-id="${topic.id}">设置题目</button>
+							</td>
+						</tr>
+						<tr th:if="${#lists.isEmpty(topics)}">
+							<td colspan="7" th:text="暂无数据"></td>
+						</tr>
+					</tbody>
+				</table>
+
+				<div class="topic-content dn">
+					<div class="topicList layui-form"></div>
+				</div>
+				<div th:include="page :: pager(${topics})" th:remove="tag"></div>
+				<script th:src="@{/js/modules/topic.js}"></script>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

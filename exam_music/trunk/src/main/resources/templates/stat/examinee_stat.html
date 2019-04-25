@@ -1,0 +1,161 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorator="layout">
+<head>
+<meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>考生统计分析</title>
+</head>
+<body>
+	<div layout:fragment="content">
+		<div class=" pull-left main-content">
+			<div class="content-item">
+				<p class="title"><a class="goback" title="返回" href="javascript:history.back();" ></a>考生统计分析</p>
+				<form class="layui-form search-form" th:action="@{/examinee_stat}">
+					<div class="layui-form-item">
+						<div class="layui-inline">
+							<label class="layui-form-label">年度：</label>
+							<div class="layui-input-inline">
+								<select class="form-control" id="year">
+									<option th:each="i:${#numbers.sequence(currentYear-3,currentYear)}" th:value="${i}" th:text="${i}" th:selected="${i==currentYear}"></option>
+								</select>
+							</div>
+						</div>
+						<div class="layui-inline">
+							<label class="layui-form-label">考试：</label>
+							<div class="layui-input-inline">
+								<select name="exam_id" class="form-control" id="exam_id">
+									<option th:each="exam : ${exams}" th:value="${exam.id}" th:text="${exam.title}"></option>
+								</select>
+							</div>
+						</div>
+						<div class="layui-inline">
+							<label class="layui-form-label">考卷：</label>
+							<div class="layui-input-inline">
+								<select name="exam_paper_id" id="examPaperSelect">
+									<option th:each="examPaper : ${examPapers}" th:value="${examPaper.id}" th:text="${examPaper.title}" th:selected="${examPaper.id eq examPaperId}"></option>
+								</select>
+							</div>
+						</div>
+						<div class="layui-inline">
+							<label class="layui-form-label">考号：</label>
+							<div class="layui-input-inline">
+								<input type="tel" name="exam_no" th:value="${examNo}" lay-verify="name" autocomplete="off" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-inline">
+							<label class="layui-form-label">考生：</label>
+							<div class="layui-input-inline">
+								<input type="tel" name="name" th:value="${name}" lay-verify="name" autocomplete="off" class="layui-input">
+							</div>
+						</div>
+						<button class="btn">查询</button>
+					</div>
+				</form>
+				<table class="layui-table" lay-skin="line">
+					<colgroup>
+						<col width="150">
+						<col>
+					</colgroup>
+					<thead>
+						<tr>
+							<th>考生</th>
+							<th>统计</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:if="${data!=null}" th:each="dataMap : ${data}">
+							<td th:text="${dataMap.key}"></td>
+							<td>
+								<table class="layui-table"  lay-even="" lay-skin="nob">
+									<tr>
+										<td>考题</td>
+										<td>难度系数</td>
+										<td>分值</td>
+										<td>个人得分</td>
+										<td>排位/总人数</td>
+									</tr>
+									<tr th:each="questionData : ${dataMap.value}">
+										<td th:text="${questionData['title']}"></td>
+										<td th:text="${questionData['diff']}"></td>
+										<td th:text="${questionData['socre']}"></td>
+										<td th:text="${questionData['person_socre']}"></td>
+										<td th:text="${questionData['ranking']}+'/'+${personNo}"></td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+						<tr th:if="${#maps.isEmpty(data)}">
+							<td colspan="2">暂无数据</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div>
+				<input type="hidden" id="names" th:value="${names}">
+				<input type="hidden" id="titles" th:value="${titles}">
+				<input type="hidden" id="chartMap" th:value="${chartMap}">
+			</div>
+			<div th:if="${!#maps.isEmpty(data)}" id="main-charts"></div>
+			<script th:src="@{/js/lib/echarts.min.js}"></script>
+		<script th:src="@{/js/lib/jquery.museum.js}"></script>
+		<script th:src="@{/js/modules/exam.js}"></script>
+			<script type="text/javascript">
+				var names = document.getElementById('names').value.split(",");
+				var titles = document.getElementById('titles').value.split("$");
+				var indicator = [];
+				for (var i = 0; i < titles.length; i++) {
+					indicator.push({text:titles[i],max:100});
+				}
+				var jsonStr = $("#chartMap").attr("value");
+				var data = [];
+				var json = $.parseJSON(jsonStr);
+				$.each(json,function(i, item){
+					var scores = [];
+					for(var k=0;k<titles.length;k++){
+						$.each(item,function(j, citem){
+							if(titles[k] == j){
+								scores.push(citem);
+							}
+						});
+						if(scores[k]==null||scores[k]==0){
+							scores[k]=0;
+						}
+					}
+					data.push({name: i,value: scores});
+				});
+				var myChart = echarts.init(document.getElementById('main-charts'));
+				var option = {
+					    tooltip: {
+					        trigger: 'axis'
+					    },
+					    legend: {
+					        buttom:'center',
+					        data: names
+					    },
+					    radar: [
+					        {
+							    indicator:indicator,
+							    center: ['50%','50%'],
+					            radius: 250
+					        }
+					    ],
+					    series: [
+					        {
+					            type: 'radar',
+					            tooltip: {
+					                trigger: 'item'
+					            },
+					            radarIndex: 0,
+					            itemStyle: {normal: {areaStyle: {type: 'default'}}},
+					            data: data
+					        }
+					    ]
+					};
+				myChart.setOption(option);
+			</script>
+		</div>
+
+	</div>
+</body>
+</html>

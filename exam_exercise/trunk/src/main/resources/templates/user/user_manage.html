@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorator="layout">
+<head>
+<meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>用户管理</title>
+</head>
+<body>
+	<div layout:fragment="content">
+		<div class=" pull-left main-content">
+			<div class="content-item">
+				<p class="title">用户管理</p>
+				<form class="layui-form search-form" action="">
+					<div class="layui-form-item">
+						<div class="layui-inline">
+							<label class="layui-form-label">姓名：</label>
+							<div class="layui-input-inline">
+								<input type="text" name="name" th:value="${name}" autocomplete="off" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-inline">
+							<label class="layui-form-label">邮箱：</label>
+							<div class="layui-input-inline">
+								<input type="text" name="email" th:value="${email}" autocomplete="off" class="layui-input">
+							</div>
+						</div>
+						<button class="btn" type="submit">查询</button>
+					</div>
+				</form>
+				<div class="layui-form">
+					<table class="layui-table" lay-skin="line">
+						<thead>
+							<tr>
+							<!-- 	<th>序号</th> -->
+								<th>姓名</th>
+								<th>邮箱</th>
+								<th>电话</th>
+								<!--<th>操作</th>-->
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:if="${exercisers != null}" th:each="exerciser:${exercisers}">
+								<!-- <td th:text="${exerciserStat.index+1}"></td> -->
+								<td th:text="${exerciser.person.name}"></td>
+								<td th:text="${exerciser.person.email}"></td>
+								<td th:text="${exerciser.person.phone}"></td>
+								<!--<td></td>-->
+							</tr>
+							<tr th:if="${#lists.isEmpty(exercisers)}">
+								<td colspan="4" th:text="暂无数据"></td>
+							</tr>
+						</tbody>
+					</table>
+					<div th:include="page :: pager(${exercisers})" th:remove="tag"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

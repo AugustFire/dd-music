@@ -1,0 +1,66 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<head>
+</head>
+<body>
+	<div th:include="page :: pager(${questions})" th:remove="tag"></div>
+	<table class="layui-table clearfix" lay-skin="line" id="container">
+		<colgroup>
+			<col width="60">
+			<col width="80">
+			<col width="">
+			<col width="250">
+			<col width="100">
+			<col width="250">
+		</colgroup> 
+		<thead>
+			<tr>
+				<th>选项</th>
+				<th>题型</th>
+				<th>题干</th>
+				<th>选项/五线谱</th>
+				<th>难度系数</th>
+				<th>标准答案</th>
+			</tr>
+		</thead>
+		<tbody id="content">
+			<input type="hidden" name="Tids" th:value="${idss}"/>
+			<tr th:if="${questions!=null}" th:each="question : ${questions}" th:data-id="${question.id}">
+				<td>
+					<input type="checkbox" th:checked="${#lists.contains(ids, question.id)}"/>
+					<div class="layui-unselect layui-form-checkbox" lay-skin="primary" th:class="${#lists.contains(ids, question.id)}?'layui-unselect layui-form-checkbox layui-form-checked':'layui-unselect layui-form-checkbox'"><i class="layui-icon"></i></div>
+				</td>
+				<td th:text="${question.questionType==1 ? '单选题': question.questionType==2 ? '多选题':question.questionType==3 ? '简答题':'视唱题'}"></td>
+				<td>
+					<img th:if="${(question.questionType==1||question.questionType==2) && !#strings.isEmpty(question.titleImage)}" th:src="@{'/img?path='+${question.titleImage}}" title="点击查看大图"/>
+					<p th:text="${question.title2}"><p>
+					<img th:if="${(question.questionType==1||question.questionType==2) && question.xmlPath2 != null && null!=question.getHasStaff() && question.getHasStaff()}" th:src="@{'/staff_img?xml_path='+${question.xmlPath2}}" title="点击查看大图"/>
+				</td>
+				<td th:class="answers-img">
+					<p th:if="${(question.questionType==1||question.questionType==2) && option.content2 != null}" th:each="option : ${question.options}" th:text="${option.content2}"></p>
+					<img th:if="${(question.questionType==1||question.questionType==2) && !#strings.isEmpty(option.optionImage)}" th:each="option : ${question.options}" th:src="@{'/img?path='+${option.optionImage}}" title="点击查看大图"/>
+					<img th:if="${(question.questionType==1||question.questionType==2) && option.xmlPath2 != null}" th:each="option : ${question.options}" th:src="@{'/staff_img?xml_path='+${option.xmlPath2}}" title="点击查看大图"/>
+					<img th:if="${(question.questionType==3||question.questionType==4) && question.xmlPath2 != null && null!=question.getHasStaff() && question.getHasStaff()}" th:src="@{'/staff_img?xml_path='+${question.xmlPath2}}" title="点击查看大图"/>
+				</td>
+				<td th:text="${question.difficulty}"></td>
+				<td th:class="answers-img">
+					<p th:if="${(question.questionType==1||question.questionType==2) && option.content2 != null && option.isTrue()}" th:each="option : ${question.options}" th:text="${option.content2}"></p>
+					<img th:if="${(question.questionType==1||question.questionType==2) && option.content2 == null && !#strings.isEmpty(option.optionImage) && option.isTrue()}" th:each="option : ${question.options}" th:src="@{'/img?path='+${option.optionImage}}" title="点击查看大图"/>
+					<img th:if="${(question.questionType==1||question.questionType==2) && option.xmlPath2 != null && option.isTrue()}" th:each="option : ${question.options}" th:src="@{'/staff_img?xml_path='+${option.xmlPath2}}" title="点击查看大图"/>
+					<span th:if="${question.questionType==3 && question.answer != null && question.answer.content2 != null}" th:text="${question.answer.content2}"></span>
+					<img th:if="${question.questionType==3 && question.answer != null && question.answer.content2 == null && question.answer.xmlPath2 != null}" th:src="@{'/staff_img?xml_path='+${question.answer.xmlPath2}}" title="点击查看大图"/>
+				</td>
+			</tr>
+			<tr th:if="${#lists.isEmpty(questions)}">
+				<td colspan="6" th:text="暂无数据"></td>
+			</tr>
+		</tbody> 
+	</table>
+	<script th:src="@{/js/lib/jquery.museum.js}"></script>
+	<script type="text/javascript">
+		$(function(){
+			$.museum($('#content img'));
+		})
+	</script>
+	<div th:include="page :: pager(${questions})" th:remove="tag"></div>
+</body>

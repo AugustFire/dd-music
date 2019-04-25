@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorator="layout">
+<head>
+<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title th:if="${examPoint !=null}">编辑考点</title>
+<title th:if="${examPoint ==null}">添加考点</title>
+</head>
+<body>
+	<div layout:fragment="content">
+		<div class=" pull-left main-content">
+			<div class="content-item">
+				<p class="title" th:if="${examPoint !=null}"><a class="goback" title="返回" href="javascript:history.back();" ></a>编辑考点</p>
+				<p class="title" th:if="${examPoint ==null}"><a class="goback" title="返回" href="javascript:history.back();" ></a>添加考点</p>
+				<form th:action="@{/exam_point}" method="post" th:if="${examPoint ==null}">
+					<div class="content">
+					<div class="layui-form-item">
+						<label class="layui-form-label">考点：</label>
+						<div class="layui-input-block">
+							<input type="text" id="name" name="name" placeholder="考点" class="layui-input" />
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label for="txtpswd" class="layui-form-label">地址：</label>
+						<div class="layui-input-block">
+							<textarea id="address" name="address" placeholder="地址" class="layui-textarea"></textarea>
+						</div>
+					</div>
+					<button type="submit" class="submit btn">确定</button>
+					<a th:href ="@{/exam_points}" class="edit btn">返回</a>		
+					</div>
+				</form>
+				
+				<form th:action="@{'/exam_point/'+${examPoint.id}}" method="post" th:if="${examPoint !=null}">
+					<div class="content">
+					<div class="layui-form-item">
+						<label class="layui-form-label">考点：</label>
+						<div class="layui-input-block">
+							<input type="text" id="name" name="name" placeholder="考点" th:value="${examPoint.name}" class="layui-input" />
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label for="txtpswd" class="layui-form-label">地址：</label>
+						<div class="layui-input-block">
+							<textarea id="intro" name="address" placeholder="地址" th:text="${examPoint.address}" class="layui-textarea"></textarea>
+						</div>
+					</div>
+					<button type="submit" class="submit btn">确定</button>
+					<a th:href ="@{/exam_points}" class="edit btn">返回</a>		
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

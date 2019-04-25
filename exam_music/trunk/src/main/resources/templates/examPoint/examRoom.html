@@ -1,0 +1,47 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorator="layout">
+<head>
+<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title th:if="${examRoom !=null}">编辑考场</title>
+<title th:if="${examRoom ==null}">添加考场</title>
+</head>
+<body>
+	<div layout:fragment="content">
+		<div class=" pull-left main-content">
+			<div class="content-item">
+				<p class="title" th:if="${examRoom !=null}"><a class="goback" title="返回" href="javascript:history.back();" ></a>编辑考场</p>
+				<p class="title" th:if="${examRoom ==null}"><a class="goback" title="返回" href="javascript:history.back();" ></a>添加考场</p>
+				<span  th:text="${'当前考点：'+examPoint.name}"></span>
+				<form th:href="@{'/exam_rooms/add/'+${examPoint.id}}" method="post" th:if="${examRoom ==null}">
+					<div class="content">
+					<div class="layui-form-item">
+						<label for="txtpswd" class="layui-form-label">考场：</label>
+						<div class="layui-input-block">
+							<textarea id="title" name="title" placeholder="考场" class="layui-textarea"></textarea>
+						</div>
+					</div>
+					<button class="submit btn" type="submit">添加</button>
+					<a th:href="@{'/exam_rooms/'+${examPoint.id}}" class="edit btn">返回</a>
+					</div>
+				</form>
+				<form th:action="@{'/exam_room/'+${examRoom.id}}" method="post" th:if="${examRoom !=null}">
+					<div class="content">
+					<div class="layui-form-item">
+						<label for="txtpswd" class="layui-form-label">考场：</label>
+						<div class="layui-input-block">
+							<textarea id="title" name="title" placeholder="考场" th:text="${examRoom.title}" class="layui-textarea"></textarea>
+						</div>
+					</div>
+					<button type="submit" class="submit btn">确定</button>
+					<a th:href="@{'/exam_rooms/'+${examPoint.id}}" class="edit btn">返回</a>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,28 @@
+body {
+	background: url(/images/bg2.jpg)  #1B110F;
+	background-attachment:fixed
+}
+.wrap-login .login .content-wrap {
+	margin-top: 0px;
+}
+.wrap-login .login {
+     background: #fff; 
+}
+.register .layui-input-block {
+    margin-left: 120px;
+}
+.register .layui-form-label {
+    width: 90px;
+}
+.wrap-login .login .content-wrap .content {
+    width: 80%;
+}
+.wrap-login .login .content-wrap {
+    padding-top: 20px;
+}
+.wrap-login .login .content-wrap .content .title {
+    line-height: 80px;
+}
+.wrap-login .login .content-wrap {
+ background: none;
+  }

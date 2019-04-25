@@ -1,0 +1,148 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorator="layout">
+<head>
+<meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>报名管理</title>
+</head>
+<body>
+	<div layout:fragment="content">
+		<div class=" pull-left main-content">
+			<div class="content-item">
+				<p class="title">报名管理</p>
+				<p class="test-title"><span th:if="${exam!=null}" th:text="${'当前考试：'+exam.title}"></span></p>
+				<form class="layui-form search-form" action="">
+					<div class="layui-form-item">
+						<div class="layui-inline">
+							<label class="layui-form-label">姓名：</label>
+							<div class="layui-input-inline">
+								<input type="text" name="name" lay-verify="name" autocomplete="off" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-inline">
+							<label class="layui-form-label">考点：</label>
+							<div class="layui-input-inline">
+								<input type="text" name="examPoint" lay-verify="examPoint" autocomplete="off" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-inline">
+							<label class="layui-form-label">考场：</label>
+							<div class="layui-input-inline">
+								<input type="tel" name="examRoom" lay-verify="examRoom" autocomplete="off" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-inline">
+							<label class="layui-form-label">准考证：</label>
+							<div class="layui-input-inline">
+								<input type="text" name="examNo" lay-verify="examNo" autocomplete="off" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-inline">
+							<label class="layui-form-label">审核状态：</label>
+							<div class="layui-input-inline">
+								<select name = "status">
+									<option value="ALL">全部</option>
+									<option value="FOR_CHECKED">待审核</option>
+									<option value="PASSED">已通过</option>
+									<option value="UN_PASSED">未通过</option>
+								</select>
+							</div>
+						</div>
+						<button class="btn">查询</button>
+					</div>
+				</form>
+				<a id="reason" style="visibility: hidden;" th:text="${unPassReason}"></a>
+				<table class="layui-table layui-form" lay-skin="line">
+					<colgroup>
+						<col width="80">
+						<col width="150">
+						<col width="150">
+						<col width="80">
+						<col width="150">
+						<col width="200">
+						<col width="150">
+						<col width="80">
+						<col width="150">
+						<col width="150">
+						<col width="150">
+						<col width="200">
+					</colgroup>
+					<thead>
+						<tr>
+							<th>选项</th>
+							<th>姓名</th>
+							<th>身份证</th>
+							<th>准考证</th>
+							<th>学校</th>
+							<th>邮箱</th>
+							<th>电话</th>
+							<th>年龄</th>
+							<th>性别</th>
+							<th>审核状态</th>
+							<th>驳回原因</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:if="${enrollments!=null}" th:each="enrollment : ${enrollments}">
+							<td><input type="hidden" th:value="${enrollment.id}"><input type="checkbox" lay-skin="primary"/></td>
+							<td th:text="${enrollment.examinee.person.name}"></td>
+							<td th:text="${enrollment.examinee.idcard}"></td>
+							<td th:text="${enrollment.examinee.examNo}"></td>
+							<td th:text="${enrollment.examinee.school}"></td>
+							<td th:text="${enrollment.examinee.person.email}"></td>
+							<td th:text="${enrollment.examinee.person.phone}"></td>
+							<td th:text="${enrollment.examinee.person.age}"></td>
+							<td th:text="${enrollment.examinee.person.gender.desc}"></td>
+							<td th:text="${enrollment.status.desc}"></td>
+							<td th:if="${'UN_PASSED' eq #strings.toString(enrollment.status)}" th:text="${enrollment.unPassedReason}"></td>
+							<td th:if="${'PASSED' eq #strings.toString(enrollment.status)}" ></td>
+							<td th:if="${'FOR_CHECKED' eq #strings.toString(enrollment.status)}"></td>
+							<td>
+								<a class="layui-btn layui-btn-small pass" th:id="${enrollment.id}" th:if="${'FOR_CHECKED' eq #strings.toString(enrollment.status)}" href="javascript:void(0)">通过</a>
+								<a class="layui-btn layui-btn-small unpass" th:id="${enrollment.id}" th:if="${'FOR_CHECKED' eq #strings.toString(enrollment.status)}" href="javascript:void(0)"  data-toggle="modal" data-target="reject-modal">驳回</a>
+							</td>
+						</tr>
+						<tr th:if="${#lists.isEmpty(enrollments)}">
+							<td colspan="12" th:text="暂无数据"></td>
+						</tr>
+					</tbody>
+				</table>
+				<div class="mt20">
+					<button class="btn blur" id="all-check">全部选中</button>
+					<button class="btn blur" id="pass-all">批量通过</button>
+					<button class="btn blur" id="unpass-all" data-toggle="modal" data-target="modal">批量驳回</button>
+				</div>
+				<!-- 模态框（Modal） -->
+				<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+									&times;
+								</button>
+								<h4 class="modal-title" id="myModalLabel">
+									驳回理由
+								</h4>
+							</div>
+							<div class="modal-body">
+								<textarea class='layui-textarea' placeholder="请输入驳回理由"></textarea>
+								<span class="tip-span">也可以勾选下列驳回理由，可多选</span>
+								<div id="reason-body">
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-primary">确定</button>
+								<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+							</div>
+						</div><!-- /.modal-content -->
+				</div><!-- /.modal -->
+				</div>
+				<script th:src="@{/js/modules/enrollments.js}"></script>
+				<div th:if="${enrollments!=null}" th:include="page :: pager(${enrollments})" th:remove="tag"></div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

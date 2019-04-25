@@ -1,0 +1,53 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>用户登录</title>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" th:href="@{/css/layui/css/layui.css}" />
+<link rel="stylesheet" th:href="@{/css/session/reset.css}">
+<link rel="stylesheet" th:href="@{/css/session/style.css}">
+<style type="text/css">
+body {
+	background: url(/images/bg.jpg) no-repeat #1A100E; 
+}
+.wrap-login .login .content-wrap {
+    margin-top: 0px;
+}
+</style>
+<body>
+	<div class="wrap-login">
+		<div class="login">
+			<img th:src="@{/images/boxTop.png}" height="114" width="631" alt="" />
+			<form th:action="@{/session}" method="post" id="session_form">
+				<div class="content-wrap">
+					<div class="content">
+						<p class="title">用户登录</p>
+						<div class="item">
+							<span class="session-span">邮箱：</span> 
+							<input type="text" id="login" name="login" placeholder="邮箱" />
+						</div>
+						<div class="item">
+							<span class="session-span">密码：</span>
+							<input type="password" id="password" name="password" autoComplete="off" placeholder="密码" />
+						</div>
+						<button type="submit" class="btn">登&nbsp;&nbsp;录</button>
+						<div class="link">
+							<a th:href="@{/user/email/find_password}">忘记密码</a><a th:href="@{/register}">注册</a>
+						</div>
+						<div class="error-msg" th:text="${warning}"></div>
+						<div class="error-msg" th:text="${message}"></div>
+					</div>
+				</div>
+			</form>
+			<img th:src="@{/images/boxBottom.png}" height="126" width="631" alt="" />
+		</div>
+<script th:src="@{/js/lib/jquery-3.2.0.min.js}"></script>
+<script th:src="@{/js/lib/jquery.validate.min.js}"></script>
+<script th:src="@{/js/modules/session.js}"></script>
+<script th:src="@{/js/formCheck/formCheck.js}"></script>
+<script th:src="@{/css/layui/layui.js}"></script>
+	</div>
+</body>
+</html>

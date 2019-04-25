@@ -1,0 +1,126 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorator="layout">
+<head>
+<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title th:if="${expert !=null}">编辑专家</title>
+<title th:if="${expert ==null}">添加专家</title>
+</head>
+<body>
+	<div layout:fragment="content">
+		<div class=" pull-left main-content">
+			<div class="content-item">
+				<p class="title" th:if="${expert !=null}"><a class="goback" title="返回" href="javascript:history.back();" ></a>编辑专家</p>
+				<p class="title" th:if="${expert ==null}"><a class="goback" title="返回" href="javascript:history.back();" ></a>添加专家</p>
+				<form th:action="@{/expert}" method="post" th:if="${expert ==null}">
+					<div class="content">
+					<div class="layui-form-item">
+						<label class="layui-form-label">帐号：</label>
+						<div class="layui-input-block">
+							<input type="text" id="login" name="login" placeholder="账号" class="layui-input" />
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">姓名：</label>
+						<div class="layui-input-block">
+							<input type="text" id="name" name="name" placeholder="姓名" class="layui-input" />
+						</div>
+					</div>
+
+					<div class="layui-form-item">
+						<label class="layui-form-label">职称：</label>
+						<div class="layui-input-block">
+							<input type="text" id="jobTitle" name="jobTitle" placeholder="职称" class="layui-input" />
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">单位：</label>
+						<div class="layui-input-block">
+							<input type="text" id="unit" name="unit" placeholder="单位" class="layui-input" />
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">电话：</label>
+						<div class="layui-input-block">
+							<input type="text" id="phone" name="phone" placeholder="电话" onkeyup="this.value=this.value.replace(/\D/g,'')"
+								class="layui-input" />
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">邮箱：</label>
+						<div class="layui-input-block">
+							<input type="email" id="email" name="email" placeholder="邮箱"
+								class="layui-input" />
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label for="txtpswd" class="layui-form-label">简介：</label>
+						<div class="layui-input-block">
+							<textarea id="intro" name="intro" placeholder="简介"
+								class="layui-textarea"></textarea>
+						</div>
+					</div>
+					<button type="submit" class="submit btn">添加</button>
+					<a th:href ="@{/experts}" class="edit btn">返回</a>		
+					</div>
+				</form>
+				
+				<form th:action="@{'/expert/'+${expert.id}}" method="post" th:if="${expert !=null}">
+					<div class="content">
+					<div class="layui-form-item">
+						<label class="layui-form-label">帐号：</label>
+						<div class="layui-input-block">
+							<input type="text" id="login" name="login" placeholder="账号" th:value="${login}"
+								class="layui-input" />
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">姓名：</label>
+						<div class="layui-input-block">
+							<input type="text" id="name" name="name" placeholder="姓名" th:value="${expert.person.name}" class="layui-input" />
+						</div>
+					</div>
+
+					<div class="layui-form-item">
+						<label class="layui-form-label">职称：</label>
+						<div class="layui-input-block">
+							<input type="text" id="jobTitle" name="jobTitle" placeholder="职称" th:value="${expert.jobTitle}" class="layui-input" />
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">单位：</label>
+						<div class="layui-input-block">
+							<input type="text" id="unit" name="unit" placeholder="单位" th:value="${expert.unit}" class="layui-input" />
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">电话：</label>
+						<div class="layui-input-block">
+							<input type="text" id="phone" name="phone" placeholder="电话" th:value="${expert.person.phone}" onkeyup="this.value=this.value.replace(/\D/g,'')" class="layui-input" />
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">邮箱：</label>
+						<div class="layui-input-block">
+							<input type="email" id="email" name="email" placeholder="邮箱" th:value="${expert.person.email}" class="layui-input" />
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label for="txtpswd" class="layui-form-label">简介：</label>
+						<div class="layui-input-block">
+							<textarea id="intro" name="intro" placeholder="简介" th:text="${expert.intro}" class="layui-textarea"></textarea>
+						</div>
+					</div>
+					<button type="submit" class="submit btn">确定</button>
+					<a th:href ="@{/experts}" class="edit btn">返回</a>
+					</div>
+				</form>
+				<div class="error-msg" th:text="${warning}"></div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

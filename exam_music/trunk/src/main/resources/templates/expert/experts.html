@@ -1,0 +1,93 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorator="layout">
+<head>
+	<meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<title>专家管理</title>
+</head>
+<body>
+	<div layout:fragment="content">
+		<div class="pull-left main-content">
+			<div class="content-item">
+				<p class="title">专家管理&nbsp;&nbsp;&nbsp;&nbsp;<a class="layui-btn layui-btn-small del-btn" th:href="@{/expert}">添加专家</a>&nbsp;&nbsp;&nbsp;&nbsp;<a class="layui-btn layui-btn-small del-btn" th:href="@{/expert/groups}">专家分组</a></p>
+				<form class="layui-form search-form" th:action="@{/experts}">
+					<div class="layui-form-item">
+						<div class="layui-inline">
+							<label class="layui-form-label">姓名：</label>
+							<div class="layui-input-inline">
+								<input type="text" name="name" th:value="${name}" lay-verify="name" autocomplete="off" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-inline">
+							<label class="layui-form-label">职称：</label>
+							<div class="layui-input-inline">
+								<input type="text" name="job_title" th:value="${jobTitle}" lay-verify="idcard" autocomplete="off" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-inline">
+							<label class="layui-form-label">单位：</label>
+							<div class="layui-input-inline">
+								<input type="text" name="unit" th:value="${unit}" lay-verify="exam_no" autocomplete="off" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-inline">
+							<label class="layui-form-label">电话：</label>
+							<div class="layui-input-inline">
+								<input type="text" name="phone" th:value="${phone}" lay-verify="phone" autocomplete="off" class="layui-input" onkeyup="this.value=this.value.replace(/\D/g,'')">
+							</div>
+						</div>
+						<div class="layui-inline">
+							<label class="layui-form-label">邮箱：</label>
+							<div class="layui-input-inline">
+								<input type="text" name="email" th:value="${email}" lay-verify="email" autocomplete="off" class="layui-input">
+							</div>
+						</div>
+						<button class="btn" type="submit">查询</button>
+					</div>
+				</form>
+				<table class="layui-table" lay-skin="line">
+					<colgroup>
+						<col width="100">
+						<col width="100">
+						<col width="200">
+						<col width="200">
+						<col width="200">
+						<col width="200">
+						<col width="100">
+					</colgroup>
+					<thead>
+						<tr>
+							<th>姓名</th>
+							<th>职称</th>
+							<th>电话</th>
+							<th>邮箱</th>
+							<th>单位</th>
+							<th>所在分组</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:if="${experts!=null}" th:each="expert : ${experts}">
+							<td th:text="${expert.person.name}"></td>
+							<td th:text="${expert.jobTitle}"></td>
+							<td th:text="${expert.person.phone}"></td>
+							<td th:text="${expert.person.email}"></td>
+							<td th:text="${expert.unit}"></td>
+							<td th:if="${expert.group!=null}" th:text="${expert.group.title}"></td>
+							<td th:if="${expert.group==null}"></td>
+							<td>
+								<a class="layui-btn layui-btn-small" th:href="@{'/expert/'+${expert.id}}">编辑</a>
+								<a style=visibility:hidden class="layui-btn layui-btn-small del-btn" th:href="@{'/expert/delete/'+${expert.id}}" >删除</a>
+							</td>
+						</tr>
+						<tr th:if="${#lists.isEmpty(experts)}">
+							<td colspan="7">暂无数据</td>
+						</tr>
+					</tbody>
+				</table>
+				<div th:include="page :: pager(${experts})" th:remove="tag"></div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

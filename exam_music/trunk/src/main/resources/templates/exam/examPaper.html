@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorator="layout">
+<head>
+<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script th:src="@{/js/My97DatePicker/WdatePicker.js}"></script>
+<title>权重设置</title>
+</head>
+<body>
+	<div layout:fragment="content">
+		<div class=" pull-left main-content">
+			<div class="content-item">
+				<p class="title"><a class="goback" title="返回" href="javascript:history.back();" ></a>设置考卷</p>
+				<form th:action="@{'/exam/'+${exam.id}+'/set_paper'}" method="post">
+					<div class="content">
+						<div class="layui-form-item">
+							<label class="layui-form-label">考试名称：</label>
+							<div class="layui-input-block">
+								<input type="text" id="title" class="layui-input" th:value="${exam.title}" disabled="disabled"/>
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">考试简介：</label>
+							<div class="layui-input-block">
+								<textarea id="intro" th:text="${exam.intro}" class="layui-textarea" disabled="disabled"></textarea>
+							</div>
+						</div>
+						<div class="layui-form-item"  id="set-pager" >
+							<label class="layui-form-label">考试科目：</label>
+							<div class="layui-input-block lh36 w70" th:each="examPaper : ${examPapers}">
+								<div class="setpage">
+									<input type="checkbox" class="w10" name="pids" th:value="${examPaper.id}" th:id="${examPaper.id}" checked="checked">
+									<label th:for="${examPaper.id}" th:text="${examPaper.title}" ></label>
+								</div>
+								<div class="setweight">
+									权重：<input type="text" name="weights" th:value="${weightMap['__${examPaper.id}__']}" class="layui-input wh50"/>%
+								</div>
+								<span th:if="${examPaper.subjectType==2}">
+									机器打分权重：
+									<input type="text" th:if="${expertMachineWeight != null}" name="machineWeight" th:value="${examPaper.id==expertMachineWeight.examPaperId ? expertMachineWeight.machineWeight: ''}" class="layui-input wh50 setweight"/>
+									<input type="text" th:if="${expertMachineWeight == null}" name="machineWeight" class="layui-input wh50 setweight"/>%
+									&nbsp;&nbsp;&nbsp;专家打分权重：
+									<input type="text" th:if="${expertMachineWeight != null}" name="expertWeight" th:value="${examPaper.id==expertMachineWeight.examPaperId ? expertMachineWeight.expertWeight: ''}" class="layui-input wh50 setweight"/>
+									<input type="text" th:if="${expertMachineWeight == null}" name="expertWeight" class="layui-input wh50 setweight"/>%
+								</span>
+							</div>
+						</div>
+						<button type="submit" id="sub-btn" class="btn pre-btn">确定</button>
+						<a th:href ="@{/exams}" class="edit btn">返回</a>
+					</div>
+				</form>
+			</div>
+		</div>
+		<script th:src="@{/js/modules/setPaper.js}"></script>
+	</div>
+</body>
+</html>

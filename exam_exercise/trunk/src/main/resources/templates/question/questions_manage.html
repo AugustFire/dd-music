@@ -1,0 +1,104 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorator="layout">
+<head>
+	<meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<title>题库管理</title>
+</head>
+<body>
+	<div layout:fragment="content">
+		<div class=" pull-left main-content">
+			<div class="content-item">
+				<p class="title">题库管理</p>
+				<form class="layui-form search-form" th:action="@{/questions/manage}">
+					<div class="layui-form-item">
+						<div class="layui-inline input-radio" id="question-types">
+							<label class="layui-form-label">题型：</label>
+							<p>
+								<input type="radio" name="type" value="1" id="1" title="单选题" />
+							</p>
+							<p>
+								<input type="radio" name="type" value="2" id="2" title="多选题" />
+							</p>
+							<p>
+								<input type="radio" name="type" value="3" id="3" title="简答题" />
+							</p>
+							<p>
+								<input type="radio" name="type" value="4" id="4" title="视唱题" />
+							</p>
+						</div>
+						<div class="layui-inline">
+							<label class="layui-form-label">难度系数：</label>
+							<div class="layui-input-inline">
+								<input type="text"  name="difficulty" th:value="${difficulty}" lay-verify="difficulty" autocomplete="off" class="layui-input">
+							</div>
+						</div>
+						<button class="btn" id="difficulty" type="submit">查询</button>
+					</div>
+				</form>
+				<table class="layui-table clearfix layui-form" lay-skin="line" id="container">
+ 					<colgroup>
+						<col width="70">
+						<col width="80">
+						<col width="">
+						<col width="">
+						<col width="90">
+						<col width="">
+						<col width="80">
+					</colgroup>
+					<thead>
+						<tr>
+							<th>选项</th>
+							<th>题型</th>
+							<th>题干</th>
+							<th th:text="${type==1 || type==2 ? '选项' : '五线谱'}"></th>
+							<th>难度系数</th>
+							<th>标准答案</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody id="content">
+						<tr th:if="${questions!=null}" th:each="question : ${questions}" th:data-id="${question.id}" th:class="answers-img">
+							<td> <input type="checkbox" name="" lay-skin="primary" title=""></td>
+							<td th:text="${question.questionType==1 ? '单选题': question.questionType==2 ? '多选题':question.questionType==3 ? '简答题':'视唱题'}"></td>
+							<td>
+								<img th:if="${(type==1||type==2) && !#strings.isEmpty(question.titleImage)}" th:src="@{'/img?path='+${question.titleImage}}" title="点击查看大图"/>
+								<p th:text="${question.title2}"><p>
+								<img th:if="${(type==1||type==2) && question.xmlPath2 != null && null!=question.getHasStaff() && question.getHasStaff()}" th:src="@{'/staff_img?xml_path='+${question.xmlPath2}}" title="点击查看大图"/>
+							</td>
+							<td>
+								<p th:if="${(type==1||type==2) && option.content2 != null}" th:each="option : ${question.options}" th:text="${option.content2}"></p>
+								<img th:if="${(type==1||type==2) && option.content2 == null && !#strings.isEmpty(option.optionImage)}" th:each="option : ${question.options}" th:src="@{'/img?path='+${option.optionImage}}" title="点击查看大图"/>
+								<img th:if="${(type==1||type==2) && option.xmlPath2 != null}" th:each="option : ${question.options}" th:src="@{'/staff_img?xml_path='+${option.xmlPath2}}" title="点击查看大图"/>
+								<img th:if="${(type==3||type==4) && question.xmlPath2 != null && null!=question.getHasStaff() && question.getHasStaff()}" th:src="@{'/staff_img?xml_path='+${question.xmlPath2}}" title="点击查看大图"/>
+							</td>
+							<td th:text="${question.difficulty}"></td>
+							<td >
+								<p th:if="${(type==1||type==2) && option.content2 != null && option.isTrue()}" th:each="option : ${question.options}" th:text="${option.content2}"></p>
+								<img th:if="${(type==1||type==2) && option.content2 == null && !#strings.isEmpty(option.optionImage) && option.isTrue()}" th:each="option : ${question.options}" th:src="@{'/img?path='+${option.optionImage}}" title="点击查看大图"/>
+								<img th:if="${(type==1||type==2) && option.xmlPath2 != null && option.isTrue()}" th:each="option : ${question.options}" th:src="@{'/staff_img?xml_path='+${option.xmlPath2}}" title="点击查看大图"/>
+								<span th:if="${type==3 && question.answer != null && question.answer.content2 != null}" th:text="${question.answer.content2}"></span>
+								<img th:if="${type==3 && question.answer != null && question.answer.content2 == null && question.answer.xmlPath2 != null}" th:src="@{'/staff_img?xml_path='+${question.answer.xmlPath2}}" title="点击查看大图"/>
+							</td>
+							<td>
+								<a class="layui-btn layui-btn-small delete" href="javascript:void(0)">删除</a>
+							</td>
+						</tr>
+						<tr th:if="${#lists.isEmpty(questions)}">
+							<td colspan="7" th:text="暂无数据"></td>
+						</tr>
+					</tbody>
+				</table>
+				<div class="mt20 pull-left" style="margin-right:30px;">
+					<button class="btn blur" id="all-check">全部选中</button>
+					<button class="btn blur" id="delete-all">批量删除</button>
+				</div>
+				<div th:include="page :: pager(${questions})" th:remove="tag"></div>
+				<script th:src="@{/js/lib/template-web.js}"></script>
+				<script th:src="@{/js/lib/jquery.museum.js}"></script>
+				<script th:src="@{/js/modules/exam_questions.js}"></script>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

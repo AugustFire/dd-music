@@ -1,0 +1,40 @@
+
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<link rel="stylesheet" th:href="@{/css/session/reset.css}">
+<link rel="stylesheet" th:href="@{/css/session/style.css}">
+<title>密码找回</title>
+</head>
+<style type="text/css">
+	body {
+		background: url(/images/bg2.jpg) no-repeat #1B110F; 
+	}
+</style>
+<body>
+	<div class="wrap-login">
+		<div class="login">
+			<img th:src="@{/images/boxTop.png}" height="114" width="631" alt="" />
+			<form th:action="@{/send_email}" method="post" id = "passwordBackEmail_form">
+				<div class="content-wrap register">
+					<div class="content">
+						<p class="title">找回密码</p>
+						<span th:text="${message}" class="green"></span>
+						<div class="item">
+							<input type="email" id = "email" name="email" placeholder="请输入注册时的邮箱" class="layui-input" />
+						</div>
+						<button class="btn" type="submit">找回</button>
+					</div>
+				</div>
+			</form>
+			<img th:src="@{/images/boxBottom.png}" height="126" width="631" alt="" />
+		</div>
+	</div>
+<script th:src="@{/js/lib/jquery-3.2.0.min.js}"></script>
+<script th:src="@{/js/lib/jquery.validate.min.js}"></script>
+<script th:src="@{/js/lib/bootstrap.min.js}"></script>
+</body>
+</html>

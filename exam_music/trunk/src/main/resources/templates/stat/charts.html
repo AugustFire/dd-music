@@ -1,0 +1,202 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorator="layout">
+<head>
+<meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>考试统计分析</title>
+</head>
+<body>
+	<div layout:fragment="content">
+		<div class=" pull-left main-content">
+			<div class="content-item"></div>
+			<div>
+				<input type="hidden" id="papers" th:value="${papers}"> <input
+					type="hidden" id="lessSixtyData" th:value="${lessSixtyData}">
+				<input type="hidden" id="sixtyData" th:value="${sixtyData}">
+				<input type="hidden" id="seventyData" th:value="${seventyData}">
+				<input type="hidden" id="eightyData" th:value="${eightyData}">
+				<input type="hidden" id="ninetyData" th:value="${ninetyData}">
+			</div>
+			<div id="main-charts"></div>
+			<script th:src="@{/js/lib/echarts.min.js}"></script>
+			<script th:src="@{/js/modules/exam.js}"></script>
+			<script type="text/javascript">
+				var myChart = echarts.init(document
+						.getElementById('main-charts'));
+				var data = [];
+				var test;
+				var startTime = 0;
+				var categories = [ 'C3', 'C#3', 'D3', 'D#3', 'E3', 'F3', 'F#3',
+						'G3', 'G#3', 'A3', 'A#3', 'B3', 'C4', 'C#4', 'D4',
+						'D#4', 'E4', 'F4', 'F#4', 'G4', 'G#4', 'A4', 'A#4',
+						'B4', 'C5', 'C#5', 'D5', 'D#5', 'E5', 'F5', 'F#5',
+						'G5', 'G#5', 'A5', 'A#5', 'B5', 'C6', 'C#6', 'D6',
+						'D#6', 'E6', 'F6', 'F#6', 'G6', 'G#6', 'A6', 'A#6',
+						'B6' ];
+				var types = [ {
+					name : 'source',
+					color : '#7b9ce1'
+				}, {
+					name : 'student',
+					color : '#bd6d6c'
+				}, ];
+
+				// Generate  data
+				echarts.util.each(categories,function(category, index) {
+									$.ajax({
+										async : false,
+										method : 'get',
+										url : "chartData",
+										success : function(data) {
+											/*data = JSON.parse(data)*/
+											test = data;
+										}
+									});
+									var baseTime;
+									var typeItem;
+									var duration;
+									console.log("test");
+									for (var i = 0; i < test.sourceMusicList.length; i++) {
+										typeItem = types[0];
+										if (categories[index] == test.sourceMusicList[i].noteName) {
+											baseTime = test.sourceMusicList[i].absoluteTime;
+											duration = test.sourceMusicList[i].noteLength;
+										}
+										data.push({
+											name : typeItem.name,
+											value : [ index, baseTime,
+													baseTime += duration,
+													duration ],
+											itemStyle : {
+												normal : {
+													color : typeItem.color
+												}
+											}
+										});
+										baseTime = 0;
+										duration = 0;
+									}
+
+									for (var i = 0; i < test.voiceMusicList.length; i++) {
+										typeItem = types[1];
+										if (categories[index] == test.voiceMusicList[i].noteName) {
+											baseTime = test.voiceMusicList[i].absoluteTime;
+											duration = test.voiceMusicList[i].noteLength;
+										}
+										data.push({
+											name : typeItem.name,
+											value : [ index, baseTime,
+													baseTime += duration,
+													duration ],
+											itemStyle : {
+												normal : {
+													color : typeItem.color
+												}
+											}
+										});
+										baseTime = 0;
+										duration = 0;
+									}
+
+								});
+
+				function renderItem(params, api) {
+					var categoryIndex = api.value(0);
+					var start = api.coord([ api.value(1), categoryIndex ]);
+					var end = api.coord([ api.value(2), categoryIndex ]);
+					var height = api.size([ 0, 1 ])[1] * 0.2;
+					return {
+						type : 'rect',
+						shape : echarts.graphic.clipRectByRect({
+							x : start[0],
+							y : start[1] - height / 2,
+							width : end[0] - start[0],
+							height : height
+						}, {
+							x : params.coordSys.x,
+							y : params.coordSys.y,
+							width : params.coordSys.width,
+							height : params.coordSys.height
+						}),
+						style : api.style()
+					};
+				}
+
+				option = {
+					tooltip : {
+						formatter : function(params) {
+							return params.marker + params.name + ': '
+									+ params.value[3] + ' ms';
+						}
+					},
+					title : {
+						text : 'Profile',
+						left : 'center'
+					},
+					legend : {
+						data : [ 'bar', 'error' ]
+					},
+					dataZoom : [
+							{
+								type : 'slider',
+								filterMode : 'weakFilter',
+								showDataShadow : false,
+								top : 400,
+								height : 10,
+								borderColor : 'transparent',
+								backgroundColor : '#e2e2e2',
+								handleIcon : 'M10.7,11.9H9.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4h1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7v-1.2h6.6z M13.3,22H6.7v-1.2h6.6z M13.3,19.6H6.7v-1.2h6.6z', // jshint ignore:line
+								handleSize : 20,
+								handleStyle : {
+									shadowBlur : 6,
+									shadowOffsetX : 1,
+									shadowOffsetY : 2,
+									shadowColor : '#aaa'
+								},
+								labelFormatter : ''
+							}, {
+								type : 'inside',
+								filterMode : 'weakFilter'
+							} ],
+					grid : {
+						height : 300
+					},
+					xAxis : {
+						min : startTime,
+						max : test.maxTime,
+					// min:0,
+					// scale: true,
+					// axisLabel: {
+					//     formatter: function (val) {
+					//         return Math.max(0, val - startTime) + ' ms';
+					//     }
+					// }
+					},
+					yAxis : {
+						data : categories
+					},
+					series : [ {
+						type : 'custom',
+						renderItem : renderItem,
+						itemStyle : {
+							normal : {
+								opacity : 0.8
+							}
+						},
+						encode : {
+							x : [ 1, 2 ],
+							y : 0
+						},
+						data : data
+					} ]
+				};
+				myChart.setOption(option);
+			</script>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,260 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorator="layout">
+<head>
+<meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>首页</title>
+</head>
+<body>
+	<div layout:fragment="content">
+		<div class=" pull-left main-content index-wrap">
+			<div class="tips">
+				<p class="notice">您有11条数据待处理！</p>
+				<span class="tip-close"></span>
+			</div>
+			<div class="clearfix">
+				<div class="pull-left content-item" >
+					<div class="content-item-tile">
+						<p>考试管理</p>
+						
+					</div>
+					<div class="item-table">
+						<table class="layui-table" lay-skin="line">
+						  <thead>
+						    <tr>
+						      <th>人物</th>
+						      <th>民族</th>
+						      <th>出场时间</th>
+
+						    </tr> 
+						  </thead>
+						  <tbody>
+						    <tr>
+						      <td>贤心</td>
+						      <td>汉族</td>
+						      <td>1989-10-14</td>
+
+						    </tr>
+						    <tr>
+						      <td>张爱玲</td>
+						      <td>汉族</td>
+						      <td>1920-09-30</td>
+
+						    </tr>
+	
+						  </tbody>
+						</table>   
+					</div>
+				</div>
+				<div class="pull-left content-item">
+					<div class="content-item-tile">
+						<p>题库管理</p>
+					</div>
+					<div class="item-table">
+						<table class="layui-table" lay-skin="line">
+						  <thead>
+						    <tr>
+						      <th>人物</th>
+						      <th>民族</th>
+						      <th>出场时间</th>
+						      <th>格言</th>
+						    </tr> 
+						  </thead>
+						  <tbody>
+						    <tr>
+						      <td>贤心</td>
+						      <td>汉族</td>
+						      <td>1989-10-14</td>
+						      <td>人生似修行</td>
+						    </tr>
+						    <tr>
+						      <td>张爱玲</td>
+						      <td>汉族</td>
+						      <td>1920-09-30</td>
+						      <td>于千万人之中遇见你所遇见的人</td>
+						    </tr>
+						     <tr>
+						      <td>贤心</td>
+						      <td>汉族</td>
+						      <td>1989-10-14</td>
+						      <td>人生似修行</td>
+						    </tr>
+						    <tr>
+						      <td>张爱玲</td>
+						      <td>汉族</td>
+						      <td>1920-09-30</td>
+						      <td>于千万年之中，时间的无涯的荒野里…</td>
+						    </tr>
+	
+						  </tbody>
+						</table>   
+					</div>
+				</div> 
+				
+				<div class="pull-left content-item">
+					<div class="content-item-tile">
+						<p>报名管理</p>
+					</div>
+					<div class="item-table">
+						<table class="layui-table" lay-skin="line">
+						  <thead>
+						    <tr>
+						      <th>人物</th>
+						      <th>民族</th>
+						      <th>出场时间</th>
+						      <th>格言</th>
+						    </tr> 
+						  </thead>
+						  <tbody>
+						    <tr>
+						      <td>贤心</td>
+						      <td>汉族</td>
+						      <td>1989-10-14</td>
+						      <td>人生似修行</td>
+						    </tr>
+						    <tr>
+						      <td>张爱玲</td>
+						      <td>汉族</td>
+						      <td>1920-09-30</td>
+						      <td>于千万年之中，时间的无涯的荒野里…</td>
+						    </tr>
+						     <tr>
+						      <td>贤心</td>
+						      <td>汉族</td>
+						      <td>1989-10-14</td>
+						      <td>人生似修行</td>
+						    </tr>
+						    <tr>
+						      <td>张爱玲</td>
+						      <td>汉族</td>
+						      <td>1920-09-30</td>
+						      <td>于千万人之中遇见你所遇见的，</td>
+						    </tr>
+	
+						  </tbody>
+						</table>   
+					</div>
+				</div>
+
+				<div class="pull-left content-item">
+					<div class="content-item-tile">
+						<p class="pull-left">成绩管理</p>
+					</div>
+					<div class="item-table">
+						<table class="layui-table" lay-skin="line">
+						  <thead>
+						    <tr>
+						      <th>人物</th>
+						      <th>民族</th>
+						      <th>出场时间</th>
+						      <th>格言</th>
+						    </tr> 
+						  </thead>
+						  <tbody>
+						    <tr>
+						      <td>贤心</td>
+						      <td>汉族</td>
+						      <td>1989-10-14</td>
+						      <td>人生似修行</td>
+						    </tr>
+	
+						  </tbody>
+						</table>   
+					</div>
+				</div> 
+				
+				<div class="pull-left content-item w100">
+					<div class="content-item-tile">
+						<p>成绩管理</p>
+					</div>
+					<div class="item-table">
+						<div id="main" style="width:94%;height:400px;"></div>
+						    <script type="text/javascript">
+						        // 基于准备好的dom，初始化echarts实例
+						        var myChart = echarts.init(document.getElementById('main'));
+						
+						        // 指定图表的配置项和数据
+						       option = {
+								    tooltip : {
+								        trigger: 'axis',
+								        axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+								            type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+								        },
+								        formatter: function (params) {
+								            var tar;
+								            if (params[1].value != '-') {
+								                tar = params[1];
+								            }
+								            else {
+								                tar = params[0];
+								            }
+								            return tar.name + '<br/>' + tar.seriesName + ' : ' + tar.value;
+								        }
+								    },
+								    legend: {
+								        data:['支出','收入']
+								    },
+								    xAxis : [
+								        {
+								            type : 'category',
+								            splitLine: {show:false},
+								            data :  function (){
+								                var list = [];
+								                for (var i = 1; i <= 11; i++) {
+								                    list.push('11月' + i + '日');
+								                }
+								                return list;
+								            }()
+								        }
+								    ],
+								    yAxis : [
+								        {
+								            type : 'value'
+								        }
+								    ],
+								    series : [
+								        {
+								            name:'辅助',
+								            type:'bar',
+								            stack: '总量',
+								            itemStyle:{
+								                normal:{
+								                    barBorderColor:'rgba(0,0,0,0)',
+								                    color:'rgba(0,0,0,0)'
+								                },
+								                emphasis:{
+								                    barBorderColor:'rgba(0,0,0,0)',
+								                    color:'rgba(0,0,0,0)'
+								                }
+								            },
+								            data:[0, 900, 1245, 1530, 1376, 1376, 1511, 1689, 1856, 1495, 1292]
+								        },
+								        {
+								            name:'收入',
+								            type:'bar',
+								            stack: '总量',
+								            itemStyle : { normal: {label : {show: true, position: 'top'}}},
+								            data:[900, 345, 393, '-', '-', 135, 178, 286, '-', '-', '-']
+								        },
+								        {
+								            name:'支出',
+								            type:'bar',
+								            stack: '总量',
+								            itemStyle : { normal: {label : {show: true, position: 'bottom'}}},
+								            data:['-', '-', '-', 108, 154, '-', '-', '-', 119, 361, 203]
+								        }
+								    ]
+								};
+								                    
+						
+						        // 使用刚指定的配置项和数据显示图表。
+						        myChart.setOption(option);
+						    </script>
+						
+						</div> 
+					</div>
+				</div> 
+
+		</div>
+	</div>
+</body>

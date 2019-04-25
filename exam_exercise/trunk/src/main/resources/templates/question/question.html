@@ -1,0 +1,20 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorator="layout">
+<head>
+	<meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<title>考题编辑</title>
+
+</head>
+<body>
+<div layout:fragment="content">
+		<div class=" pull-left main-content">
+			<div class="content-item">
+				<p class="title"><a class="goback" title="返回" href="javascript:history.back();" ></a>考题编辑</p>
+			</div>
+		</div>
+		<script th:src="@{/js/modules/exam_questions.js}"></script>	
+</div>
+	
+</body>
+</html>

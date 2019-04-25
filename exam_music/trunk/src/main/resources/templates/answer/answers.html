@@ -1,0 +1,310 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorator="layout">
+<head>
+<meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>答题管理</title>
+</head>
+<body>
+	<div layout:fragment="content">
+		<div class=" pull-left main-content">
+			<div class="content-item">
+				<p class="title">答题管理</p>
+				<form class="layui-form search-form" action="">
+					<div class="layui-form-item">
+						<div class="layui-inline">
+							<label class="layui-form-label">姓名：</label>
+							<div class="layui-input-inline">
+								<input type="tel" name="name" th:value="${name}" lay-verify="name" autocomplete="off" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-inline">
+							<label class="layui-form-label">考号：</label>
+							<div class="layui-input-inline">
+								<input type="tel" name="exam_no" th:value="${examNo}" lay-verify="examNo" autocomplete="off" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-inline">
+							<label class="layui-form-label">年度：</label>
+							<div class="layui-input-inline">
+								<select class="form-control" id="year">
+									<option th:each="i:${#numbers.sequence(currentYear-3, currentYear)}" th:value="${i}" th:text="${i}" th:selected="${i==currentYear}"></option>
+								</select>
+							</div>
+						</div>
+						<div class="layui-inline">
+							<label class="layui-form-label">考试：</label>
+							<div class="layui-input-inline w180">
+								<select class="form-control" id="exam_id">
+									<option th:each="exam : ${exams}" th:value="${exam.id}" th:text="${exam.title}"></option>
+								</select> 
+								
+							</div>
+						</div>
+						<div class="layui-inline">
+							<label class="layui-form-label">考卷：</label>
+							<div class="layui-input-inline">
+								<select name="exam_paper_id" id="examPaperSelect">
+									<option th:each="examPaper : ${examPapers}"  th:data-type="${examPaper.subjectType}"  th:value="${examPaper.id}" th:text="${examPaper.title}" th:selected="${examPaper.id eq examPaperId}"></option>
+								</select>
+							</div>
+						</div>
+						<div class="layui-inline input-radio" id="question-types">
+							<label class="layui-form-label">题型：</label>
+							<p>
+								<input type="radio" name="question_type" value="1" id="1" title="单选题" th:checked="${1 eq questionType}"/>
+							</p>
+							<p>
+								<input type="radio" name="question_type" value="2" id="2" title="多选题" th:checked="${2 eq questionType}"/>
+							</p>
+							<p>
+								<input type="radio" name="question_type" value="3" id="3" title="简答题"  th:checked="${3 eq questionType}"/>
+							</p>
+							<p>
+								<input type="radio" name="question_type" value="4" id="4" title="视唱题" th:checked="${4 eq questionType}"/>
+							</p>
+						</div>
+						<button class="btn">查询</button>
+					</div>
+				</form>
+				<div class="">
+				<table class="layui-table" lay-skin="line" id="layerDemo">
+					<colgroup>
+						<col width="80">
+						<col width="">
+						<col width="">
+						<col th:if="${questionType!=4}" width="250">
+						<col th:if="${questionType!=4}" width="250">
+						<col th:if="${questionType==4}" width="250">
+						<col width="80">
+					</colgroup>
+					<thead>
+						<tr>
+							<th>考生</th>
+							<th>考号</th>
+							<th>题干</th>
+							<th th:if="${questionType!=4}">标准答案</th>
+							<th th:if="${questionType!=4}">考生答案</th>
+							<th th:if="${questionType==4}">答案分析</th>
+							<th>得分</th>
+						</tr>
+					</thead>
+					<tbody id="content">
+						<tr th:if="${!#lists.isEmpty(records)}" th:each="record : ${records}">
+							<td th:text="${record['name']}"></td>
+							<td th:text="${record['examno']}"></td>
+							<td th:text="${record['title']}"></td>
+							<td th:if="${!#lists.isEmpty(record['standard_options']) && record['is_option_content']}">
+								<span th:each="standard_option : ${record['standard_options']}" th:text="${standard_option}"></span>
+							</td>
+							<td th:if="${#lists.isEmpty(record['standard_options']) && record['is_option_content']!=null && record['is_option_content']}">
+							</td>
+							<td th:if="${!#lists.isEmpty(record['examinee_options']) && record['is_option_content']}">
+								<span th:each="examinee_option : ${record['examinee_options']}" th:text="${examinee_option}"></span>
+							</td>
+							<td th:if="${#lists.isEmpty(record['examinee_options']) && record['is_option_content']!=null && record['is_option_content']}">
+							</td>
+							<td th:if="${!#lists.isEmpty(record['standard_options_path']) && record['is_option_path']}" th:class="answers-img">
+								<img th:each="standard_option : ${record['standard_options_path']}" th:src="@{'/staff_img?xml_path='+${standard_option}}" title="点击查看大图" />
+							</td>
+							<td th:if="${#lists.isEmpty(record['standard_options_path']) && record['is_option_path']!=null && record['is_option_path']}" th:class="answers-img">
+							</td>
+							<td th:if="${!#lists.isEmpty(record['examinee_options_path']) && record['is_option_path']}" th:class="answers-img">
+								<img th:each="examinee_option : ${record['examinee_options_path']}" th:src="@{'/staff_img?xml_path='+${examinee_option}}" title="点击查看大图" />
+							</td>
+							<td th:if="${#lists.isEmpty(record['examinee_options_path']) && record['is_option_path']!=null && record['is_option_path']}" th:class="answers-img"></td>
+							<td th:if="${record['standard_answer']!=null && record['is_shortanswer_content']!=null && record['is_shortanswer_content']}" th:text="${record['standard_answer']}"></td>
+							<td th:if="${record['standard_answer']==null && record['is_shortanswer_content']!=null && record['is_shortanswer_content']}"></td>
+							<td th:if="${record['examinee_answer']!=null && record['is_shortanswer_content']!=null && record['is_shortanswer_content']}" th:text="${record['examinee_answer']}"></td>
+							<td th:if="${record['examinee_answer']==null && record['is_shortanswer_content']!=null && record['is_shortanswer_content']}"></td>
+							<td th:if="${record['standard_path']!=null && record['is_shortanswer_path']!=null && record['is_shortanswer_path']}" th:class="answers-img"><img th:src="@{'/staff_img?xml_path='+${record['standard_path']}}" title="点击查看大图"/></td>
+							<td th:if="${record['standard_path']==null && record['is_shortanswer_path']!=null && record['is_shortanswer_path']}" th:class="answers-img"></td>
+							<td th:if="${record['examinee_path']!=null && record['is_shortanswer_path']!=null && record['is_shortanswer_path']}" th:class="answers-img"><img th:src="@{'/staff_img?xml_path='+${record['examinee_path']}}" title="点击查看大图"/></td>
+							<td th:if="${record['examinee_path']==null && record['is_shortanswer_path']!=null && record['is_shortanswer_path']}" th:class="answers-img"></td>
+							<td th:if="${questionType==4}">
+								<a class="lookSingAudio" style=display:none th:data-id="${record.lookSingAudio}"></a>
+                                <button data-method="confirmTrans" class="layui-btn layui-btn-small curr-btn" th:data-name="${record['name']}"  th:data-id="'/looksing_data?exam_id='+${examId}+'&exam_paper_id='+${examPaperId}+'&examinee_id='+${record['examinee_id']}+'&question_id='+${record['question_id']}">答案分析</button>
+								<button  data-method="offset" data-type="auto" class="layui-btn layui-btn-small cav-btn" th:data-name="${record['name']}" th:data-id="'/curve_data?exam_id='+${examId}+'&exam_paper_id='+${examPaperId}+'&examinee_id='+${record['examinee_id']}+'&question_id='+${record['question_id']}">音高分析</button>
+							</td>
+							<td th:text="${record['score']}"></td>
+						</tr>
+						<tr th:if="${#lists.isEmpty(records)}">
+							<td th:if="${questionType != 4}" colspan="6">暂无数据</td>
+							<td th:if="${questionType == 4}" colspan="5">暂无数据</td>
+						</tr>
+					</tbody>
+				</table>
+							<div class="modal-body clearfix dn" id="modal" >
+								<div class="layui-tab">
+									<ul class="layui-tab-title">
+										<li class="layui-this" id="table-li">表格显示</li>
+										<li id="charts-li">图形显示</li>
+									</ul>
+									<div class="layui-tab-content" id="modal-table">
+										<div class="table-view layui-tab-item layui-show">
+											<div class="table-left">标准音乐</div>
+											<div class="table-right">视唱音乐</div>
+											<table class="layui-table  table-left" lay-skin="line">
+												<thead>
+												<tr>
+													<th>音高</th>
+													<th width="150">真实频率/相对频率</th>
+													<th>音长</th>
+												</tr>
+												</thead>
+												<tbody id="standard-answer">
+											
+												</tbody>
+											</table>
+											<table class="layui-table table-right" lay-skin="line">
+												<thead>
+												<tr>
+													<th>音高</th>
+													<th>矫正值</th>
+													<th>频率</th>
+													<th>音长</th>
+													<th>音高评比</th>
+													<th>音长评比</th>
+												</tr>
+												</thead>
+												<tbody id="answer-table">
+
+												</tbody>
+											</table>
+											<div class="cardinal">
+												
+											</div>
+										</div>
+											<script type="text/html" id="standard-lists">
+													{{each SourceMusic as sa}}
+													<tr data-key={{sa.Key}} data-id={{sa.Id}}>
+														<td>{{sa.NoteName}}</td>
+														<td>{{sa.PitchToFreq}}/{{sa.VirtualFreq}}</td>
+														<td>{{sa.NoteLength}}</td>
+													</tr>
+													{{/each}}
+												</script>
+											<script type="text/html" id="studentanswer-lists">
+													{{each VoiceMusic as V i}}
+													{{if V.SequenceNo==i}}
+														{{if V.NoteIsTrue==false}}
+														<tr class="anerror" data-key={{V.Key}} data-id={{V.Id}}>
+														{{/if}}
+													
+														{{if V.NoteIsTrue==true}}
+														<tr data-key={{V.Key}} data-id={{V.Id}}>
+														{{/if}}
+														<td data-key={{V.Key}} data-id={{V.Id}}>{{V.NoteName}}</td>
+														<td>{{V.RectifyNote}}</td>
+														<td>{{V.PitchToFreq}}</td>
+														<td>{{V.NoteLength}}</td>
+														{{if V.NoteIsTrue==true}}
+														<td><span class="answer-right"></span></td>
+														{{/if}}
+														{{if V.NoteIsTrue==false}}
+														<td><span class="answer-error"></span></td>
+														{{/if}}
+														{{if V.NoteIsTrue==null}}
+														<td></td>
+														{{/if}}
+														{{if V.LengthIsTrue==false}}
+														<td><span class="answer-error"></span></td>
+														{{/if}}
+														{{if V.LengthIsTrue==true}}
+														<td><span class="answer-right"></span></td>
+														{{/if}}
+														{{if V.LengthIsTrue==null}}
+														<td></td>
+														{{/if}}
+													</tr>
+													{{/if}}
+													{{if V.SequenceNo!==i}}
+													<tr data-key={{V.Key}}>
+														<td colspan="6" style="height:39px;"></td>
+													</tr>
+													{{/if}}
+													{{/each}}
+
+
+												</script>
+												<script type="text/html" id="cardinal-list">
+													<p><span>标准速度：</span>{{SampleSpeed}}Bpm</p>
+													<p><span>视唱速度：</span>{{VoiceSpeed}}Bpm</p>
+													<p><span>音符总数：</span>{{NoteCount }}</p>
+													<p><span>音高正确数：</span>{{NoteNo}}</p>
+													<p><span>音长正确数：</span>{{LengthNo}}</p>
+													<p><span>音准正确数：</span>{{TrueNo}}</p>
+													<p><span>准确率：</span>{{(Accuracy*100).toFixed(2)+"%"}}</p>
+												</script>
+										<div class="layui-tab-item charts-view">
+											<div id="tag">
+											</div>
+											<div class="tag-p">
+												<p><span></span>标准旋律</p>
+												<p><span></span>视唱旋律</p>
+												<p><span></span>音高错误</p>
+												<p><span></span>唱漏音高</p>
+												<p><span></span>音长错误</p>
+												<p><input type="checkbox" id="note" checked="checked"><label for="note">显示音符</label></p>
+												<p><input type="checkbox" id="pitch-num" checked="checked"/><label for="pitch-num">矫正音高</label></p>
+											</div>
+											<div class="charts-wrap" id="dot-wrap">
+
+												<div class="charts">
+													
+													<div class="scroll-x">
+														<!-- <ul class="x-time"></ul> -->
+														<ul class="x-time-text"></ul>
+													</div>
+													<div class="scroll-y">
+														<ul class="charts-name-text"></ul>
+														<ul class="x-time"></ul>
+														<ul class="charts-name"></ul>
+													</div>
+												</div>
+											</div>
+											<div class="cardinal">
+											</div>
+										</div>
+									</div>
+
+								</div>
+							</div>
+
+						<div class="modal-body clearfix dn" id="pitch">
+							<p class="player-wrap"></p>
+							<div class="over">
+								<ul class="x-time-text"></ul>
+								<div style="margin-bottom:-10px">
+								<ul class="charts-name-text"></ul>
+								</div>
+								<div class="pitch-wrap" id="chart-wrap">
+									
+									<div class="charts" id="pitch-charts-wrap">
+										<!-- <ul class="x-time-text"></ul> -->
+										<ul class="charts-name"></ul>
+										
+										
+										<div class="scroll-div">
+											
+											<ul class="x-time" id="canvas-wrap"></ul>
+											<ul class="x-time" id="charts-line"></ul>
+										</div>
+					
+									</div>
+								</div>
+								<div class="music"></div>
+							</div>
+						</div>
+				<script th:src="@{/js/lib/jquery.museum.js}"></script>		
+				<script th:src="@{/js/lib/template-web.js}"></script>
+				<script th:src="@{/js/lib/echarts.min.js}"></script>
+				<script th:src="@{/js/modules/answer.js}"></script>
+				<script th:src="@{/js/modules/canvas.js}"></script>
+			</div>
+			<div th:if="${!#lists.isEmpty(records)}" th:include="page :: pager(${records})" th:remove="tag"></div>
+		</div>
+	</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorator="layout">
+<head>
+	<meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>账户设置</title>
+</head>
+<body>
+<div layout:fragment="content">
+	<div class=" pull-left main-content">
+		<div class="content-item">
+			<p class="title">账户设置</p>
+			<form class="user_form layui-form " role="form"  th:action="@{'/user/update/'+${person.id}}" method="post" id="set-user">
+				<div class="content-wrap register">
+					<div class="content">
+						<div class="layui-form-item">
+							<label class="layui-form-label pull-left">姓名：</label>
+							<div class="layui-input-block">
+								<input name="name" th:value="${person.name}" th:disabled="${true}"  lay-verify="required" autocomplete="off" id="user" class="layui-input" type="text">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">性别：</label>
+							<div class="layui-input-block">
+								<input type="radio" name="gender" value="MAN" title="男" checked="" th:checked="${isMan}">
+								<input type="radio" name="gender" value="WOMAN" title="女" th:checked="${!isMan}">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">手机号码：</label>
+							<div class="layui-input-block">
+								<input type="text" name="phone" th:value="${person.phone}" autoComplete="off"  class="layui-input" />
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">年龄：</label>
+							<div class="layui-input-block">
+								<input type="text" name="age" th:value="${person.age}" autoComplete="off"  class="layui-input" />
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">地址：</label>
+							<div class="layui-input-block">
+								<input type="text" name="address" th:value="${person.address}" autoComplete="off"  class="layui-input" />
+							</div>
+						</div>
+
+						<div class="layui-form-item">
+							<label class="layui-form-label"></label>
+							<div class="layui-input-block">
+								<button type="submit" class="btn save-btn">提&nbsp;&nbsp;交</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
+
+		</div>
+	</div>
+</div>
+</body>
+</html>

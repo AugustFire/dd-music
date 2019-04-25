@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="fragments/top">
+	<div th:fragment="menuer">
+		<div class="pull-left siderbar">
+			<div class="bar-title">
+				<p class="title">
+					音乐练习系统
+				</p>
+			</div>
+			<div class="user">
+				<img th:src="@{/images/userImg.png}" height="121" width="121" alt="">
+				<p class="username" th:if="${session.manager != null}" th:text="${session.manager.code}">管理员</p>
+				<p class="username" th:if="${session.exerciser != null}" th:text="${session.name}">练习者</p>
+				<a class="exit" th:href="@{/session}" data-method="delete" title="安全退出">退出登录</a>
+			</div>
+			<ul class="siderbar-list" th:if="${session.manager != null}">
+				<li><a th:href="@{/user/manage}" th:class="${#strings.contains(#httpServletRequest.getServletPath(),'user/manage')} ? 'curr' : 'results'">用户管理</a></li>
+				<li><a th:href="@{/questions/manage?type=3}" th:class="${#strings.contains(#httpServletRequest.getServletPath(),'questions/manage')} ? 'curr' : 'enrollments'">题库管理</a></li>
+				<li><a th:href="@{/topics}" th:class="${#strings.contains(#httpServletRequest.getServletPath(),'topic')} ? 'curr' : 'expert_results'">专题管理</a></li>
+				<li><a th:href="@{/authorizes}" th:class=" ${#strings.contains(#httpServletRequest.getServletPath(),'authorize')} ? 'curr' : 'experts'">授权管理</a></li>
+				<li><a th:href="@{/answer_records}" th:class="${#strings.contains(#httpServletRequest.getServletPath(),'answer_record')} ? 'curr' : 'exam_questions'">答题管理</a></li>
+				<li><a th:href="@{/behaviors}" th:class="${#strings.contains(#httpServletRequest.getServletPath(),'behavior')} ? 'curr' : 'stat'">行为管理</a></li>
+			</ul>
+			<ul class="siderbar-list" th:if="${session.exerciser != null}">
+				<li><a th:href="@{/user/set}" th:class="${#strings.contains(#httpServletRequest.getServletPath(),'user/set')} ? 'curr' : 'results'">账户设置</a></li>
+				<li><a th:href="@{/answer_records/exerciser}" th:class="${#strings.contains(#httpServletRequest.getServletPath(),'answer_record')} ? 'curr' : 'enrollments'">我的答题</a></li>
+			</ul>
+		</div>
+	</div>
+</html>

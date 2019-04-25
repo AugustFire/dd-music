@@ -1,0 +1,142 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorator="layout">
+<head>
+<meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>考卷统计分析</title>
+</head>
+<body>
+	<div layout:fragment="content">
+		<div class=" pull-left main-content">
+			<div class="content-item">
+				<p class="title"><a class="goback" title="返回" href="javascript:history.back();" ></a>考卷统计分析</p>
+				<form class="layui-form search-form" th:action="@{/exam_paper_stat}">
+					<div class="layui-form-item">
+						<div class="layui-inline">
+							<label class="layui-form-label">年度：</label>
+							<div class="layui-input-inline">
+								<select class="form-control" id="year">
+									<option th:each="i:${#numbers.sequence(currentYear-3,currentYear)}" th:value="${i}" th:text="${i}" th:selected="${i==currentYear}"></option>
+								</select>
+							</div>
+						</div>
+						<div class="layui-inline">
+							<label class="layui-form-label">考试：</label>
+							<div class="layui-input-inline w180">
+								<select name="exam_id" class="form-control" id="exam_id">
+									<option th:each="exam : ${exams}" th:value="${exam.id}" th:text="${exam.title}"></option>
+								</select>
+							</div>
+						</div>
+						<div class="layui-inline">
+							<label class="layui-form-label">考卷：</label>
+							<div class="layui-input-inline">
+								<select name="exam_paper_id" id="examPaperSelect">
+									<option th:each="examPaper : ${examPapers}" th:value="${examPaper.id}" th:text="${examPaper.title}" th:selected="${examPaper.id eq examPaperId}"></option>
+								</select>
+							</div>
+						</div>
+						<button class="btn">查询</button>
+					</div>
+				</form>
+				<table class="layui-table" lay-skin="line">
+					<colgroup>
+						<col width="200">
+						<col width="100">
+						<col width="100">
+						<col width="100">
+						<col width="100">
+						<col width="100">
+					</colgroup>
+					<thead>
+						<tr>
+							<th>考题</th>
+							<th>难度系数</th>
+							<th>分值</th>
+							<th>不同分数得分的人数</th>
+							<th>平均分</th>
+							<th>实测难度系数</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:if="${data!=null}" th:each="dataMap : ${data}">
+							<td th:text="${dataMap.key}"></td>
+							<td th:text="${dataMap.value['diff']}"></td>
+							<td th:text="${dataMap.value['score']}"></td>
+							<td>
+								<p th:each="scoreNoList : ${dataMap.value['person_score_no']}" th:text="${scoreNoList}"></p>
+							</td>
+							<td th:text="${dataMap.value['average_score']}"></td>
+							<td th:text="${dataMap.value['reality_diff']}"></td>
+						</tr>
+						<tr th:if="${#maps.isEmpty(data)}">
+							<td colspan="6">暂无数据</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div>
+				<input type="hidden" id="scores" th:value="${scores}">
+				<input type="hidden" id="titles" th:value="${titles}">
+				<input type="hidden" id="chartMap" th:value="${chartMap}">
+			</div>
+			<div th:if="${!#maps.isEmpty(data)}" id="main-charts"></div>
+			<script th:src="@{/js/lib/echarts.min.js}"></script>
+			<script th:src="@{/js/lib/jquery.museum.js}"></script>
+			<script th:src="@{/js/modules/exam.js}"></script>
+			<script type="text/javascript">
+				var scores = document.getElementById('scores').value.split(",");
+				var titles = document.getElementById('titles').value.split("$");
+				var series = [];
+				var jsonStr = $("#chartMap").attr("value");
+				var json = $.parseJSON(jsonStr);
+				$.each(json,function(i, item){
+					var cdata = [];
+					var count = 0;
+					for(var k=0;k<titles.length;k++){
+						$.each(item,function(j, citem){
+							if(titles[k] == j){
+								cdata.push(citem);
+							}
+						});
+						if(cdata[k]==null||cdata[k]==0){
+							cdata.push(null);
+						}
+					}
+					series.push({name: i, type: 'bar', stack: '总量', barWidth : 30,label: { normal: { show: true, position: 'insideRight' }},data:cdata});
+				});
+				var myChart = echarts.init(document.getElementById('main-charts'));
+				var option = {
+					    tooltip : {
+					        trigger: 'axis',
+					        axisPointer : {
+					            type : 'shadow'
+					        }
+					    },
+					    legend: {
+					        data: scores
+					    },
+					    grid: {
+					        left: '3%',
+					        right: '4%',
+					        bottom: '3%',
+					        containLabel: true
+					    },
+					    xAxis:  {
+					        type: 'value',
+					        name: '人数'
+					    },
+					    yAxis: {
+					        type: 'category',
+					    	data: titles,
+					    	name: '题目'
+					    },
+					    series:series
+					};
+			myChart.setOption(option);
+		</script>
+		</div>
+
+	</div>
+</body>
+</html>

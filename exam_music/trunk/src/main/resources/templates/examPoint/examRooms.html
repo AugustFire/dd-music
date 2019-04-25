@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorator="layout">
+<head>
+	<meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<title>考场管理</title>
+</head>
+<body>
+	<div layout:fragment="content">
+		<div class=" pull-left main-content">
+			<div class="content-item">
+				<p class="title"><a class="goback" title="返回" href="javascript:history.back();" ></a>考场管理&nbsp;&nbsp;&nbsp;&nbsp;<a class="layui-btn layui-btn-small del-btn" th:href="@{'/exam_rooms/add/'+${examPoint.id}}">添加考场</a></p>
+				<span  th:text="${'当前考点：'+examPoint.name}"></span>
+				<table class="layui-table" lay-skin="line">
+					<colgroup>
+						<col width="100">
+						<col width="100">
+					</colgroup>
+					<thead>
+						<tr>
+							<th>考场</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:if="${examRooms!=null}" th:each="examRoom : ${examRooms}">
+							<td th:text="${examRoom.title}"></td>
+							<td>
+								<a class="layui-btn layui-btn-small" th:href="@{'/exam_room/'+${examRoom.id}}">编辑</a>
+								<button style=visibility:hidden class="layui-btn layui-btn-small del-btn" th:href="@{'/exam_point/delete/'+${examRoom.id}}" >删除</button>
+							</td>
+						</tr>
+						<tr th:if="${#lists.isEmpty(examRooms)}">
+							<td colspan="2">暂无数据</td>
+						</tr>
+					</tbody>
+				</table>
+	<!-- 			<a class="layui-btn layui-btn-small" th:href="@{/exam_points}">返回</a> -->
+			</div>
+		</div>
+	</div>
+</body>
+</html>

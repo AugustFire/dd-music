@@ -1,0 +1,84 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorator="layout">
+<head>
+<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>考生编辑</title>
+</head>
+<body>
+	<div layout:fragment="content">
+		<div class=" pull-left main-content">
+			<div class="content-item">
+				<p class="title"><a class="goback" title="返回" href="javascript:history.back();" ></a>考生编辑</p>
+				<form class="layui-form" th:action="@{'/examinee/'+${examinee.id}}" method="post" id="examinee_form">
+					<div class="content">
+						<div class="layui-form-item">
+							<label class="layui-form-label">姓名：</label>
+							<div class="layui-input-block">
+								<input type="text" name="name" lay-verify="name" autocomplete="off" th:value="${examinee.person.name}" class="layui-input" />
+							</div>
+						</div>
+						<div class="layui-form-item" id="sexchecked" >
+							<label class="layui-form-label">性别：</label>
+							<div class="layui-input-block checked-sex">
+								<input type ="hidden" th:value = "${examinee.person.gender}" />
+								<input type="radio" name="gender" value="MAN" title="男" id="MAN" />
+								<input type="radio" name="gender" value="WOMAN" title="女" id="WOMAN" />
+							</div>
+						</div>
+	
+						<div class="layui-form-item">
+							<label class="layui-form-label">身份证：</label>
+							<div class="layui-input-block idcard">
+								<input type="text" name="idcard" lay-verify="idcard" autocomplete="off" th:value="${examinee.idcard}" class="layui-input" />
+							</div>
+						</div>
+						
+						
+						<div class="layui-form-item">
+							<label class="layui-form-label">手机：</label>
+							<div class="layui-input-block">
+								<input type="text" name="phone" lay-verify="phone" autocomplete="off" th:value="${examinee.person.phone}" class="layui-input" onkeyup="this.value=this.value.replace(/\D/g,'')" />
+							</div>
+						</div>
+	
+						<div class="layui-form-item">
+							<label class="layui-form-label">邮箱：</label>
+							<div class="layui-input-block">
+								<input type="text" name="email" lay-verify="email" autocomplete="off" th:value="${examinee.person.email}" class="layui-input" />
+							</div>
+						</div>
+	
+						<div class="layui-form-item">
+							<label class="layui-form-label">年龄：</label>
+							<div class="layui-input-block">
+								<input type="text" name="age" lay-verify="age" autocomplete="off" onkeyup="this.value=this.value.replace(/\D/g,'')" th:value="${examinee.person.age}" class="layui-input" />
+							</div>
+						</div>
+	
+						<div class="layui-form-item">
+							<label class="layui-form-label">学校：</label>
+							<div class="layui-input-block">
+								<input type="text" name="school" lay-verify="school" autocomplete="off" th:value="${examinee.school}" class="layui-input" />
+							</div>
+						</div>
+	
+						<div class="layui-form-item">
+							<label class="layui-form-label">照片：</label>
+							<div class="layui-input-block" data-name="username">
+								<img name="file" th:src="@{'/examinee/'+${examinee.id}+'/photo'}" alt="" height="150" />
+							</div>
+						</div>
+						<button type="submit" class="edit btn">修改</button>
+						<a th:href ="@{/examinees}" class="edit btn">返回</a>		
+						<div class="error-msg" th:text="${warning}"></div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

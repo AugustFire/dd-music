@@ -1,0 +1,199 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorator="layout">
+<head>
+	<meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<title>添加专题</title>
+</head>
+<body>
+	<div layout:fragment="content">
+		<div class="pull-left main-content">
+			<div class="content-item">
+				<p th:if="${topic == null}" class="title"><a class="goback" title="返回" href="javascript:history.back();" ></a>添加专题</p>
+				<p th:if="${topic != null}" class="title"><a class="goback" title="返回" href="javascript:history.back();" ></a>修改专题</p>
+ 				<form th:if="${topic == null}" class="layui-form mg30" th:action="@{/topic}" method="post">
+					<div class="layui-form-item">
+						<div class="layui-inline">
+							<label class="layui-form-label">科目类型：</label>
+							<div class="layui-input-inline">
+								<select class="form-control" name="subjectType">
+									<option value="1">乐理</option>
+									<option value="3">听音</option>
+									<option value="2">视唱</option>
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<div class="layui-inline">
+							<label class="layui-form-label">专题名称：</label>
+							<div class="layui-input-inline">
+								<input type="tel" name="title" class="layui-input" />
+							</div>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<div class="layui-inline">
+							<label class="layui-form-label">年份：</label>
+							<div class="layui-input-inline">
+								<select class="form-control" id="year" name="year">
+									<option th:each="i:${#numbers.sequence(currentYear, currentYear+3)}" th:value="${i}" th:text="${i}"
+								        th:selected="${i==currentYear}"></option>
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<div class="layui-inline">
+							<label class="layui-form-label">地区：</label>
+							<div class="layui-input-inline">
+								<input type="tel" name="area" class="layui-input">
+							</div>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<div class="layui-inline">
+							<label class="layui-form-label">费用：</label>
+							<div class="layui-input-inline">
+								<input type="number" name="fee" class="layui-input topic-input" />元
+							</div>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<div class="layui-inline">
+							<label class="layui-form-label">主题/标签：</label>
+							<div class="layui-input-inline">
+								<input type="text" name="subject" class="layui-input set_subject"   readonly="readonly"  data-toggle="modal" data-target="#Modal" autocomplete="off" />
+								<input type="hidden" name="sids" value=""/ >
+							</div>
+						</div>
+					</div>
+					<div class="layui-form-item top30">
+						<div class="layui-inline">
+							<label class="layui-form-label"></label>
+							<div class="layui-input-inline">
+								<button class="btn" type="submit">添加</button>
+							</div>
+						</div>
+					</div>
+				</form> 
+				<form th:if="${topic != null}" class="layui-form mg30" th:action="@{'/topic/'+${tid}}" method="post">
+					<input type="hidden" name="_method" value="put"/>
+					<div class="layui-form-item">
+						<div class="layui-inline">
+							<label class="layui-form-label">科目类型：</label>
+							<div class="layui-input-inline">
+								<select class="form-control" name="subjectType">
+									<option value="1" th:selected="${1==topic.subjectType}">乐理</option>
+									<option value="3" th:selected="${3==topic.subjectType}">听音</option>
+									<option value="2" th:selected="${2==topic.subjectType}">视唱</option>
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<div class="layui-inline">
+							<label class="layui-form-label">专题名称：</label>
+							<div class="layui-input-inline">
+								<input type="tel" name="title" th:value="${topic.title}" class="layui-input" />
+							</div>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<div class="layui-inline">
+							<label class="layui-form-label">年份：</label>
+							<div class="layui-input-inline">
+								<select class="form-control" id="year" name="year">
+									<option th:each="i:${#numbers.sequence(currentYear, currentYear+3)}" th:value="${i}" th:text="${i}"
+								        th:selected="${i==topic.year}"></option>
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<div class="layui-inline">
+							<label class="layui-form-label">地区：</label>
+							<div class="layui-input-inline">
+								<input type="tel" name="area" th:value="${topic.area}" class="layui-input" />
+							</div>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<div class="layui-inline">
+							<label class="layui-form-label">费用：</label>
+							<div class="layui-input-inline">
+								<input type="number" th:value="${topic.fee}" disabled="disabled" class="layui-input topic-input" />元
+							</div>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<div class="layui-inline">
+							<label class="layui-form-label">主题/标签：</label>
+							<div class="layui-input-inline">
+								<input type="text" name="subject" th:value="${subjects}" class="layui-input set_subject" autocomplete="off" data-toggle="modal" data-target="#Modal" >
+								<input type="hidden" name="sids" th:value="${subjectIds}">
+							</div>
+						</div>
+					</div>
+					<div class="layui-form-item top30">
+						<div class="layui-inline">
+							<label class="layui-form-label"></label>
+							<div class="layui-input-inline">
+								<button class="btn" type="submit">修改</button>
+							</div>
+						</div>
+					</div>
+				</form>
+ 				<div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+					<div class="modal-dialog" style="width:70%;">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+									&times;
+								</button>
+								<h4 class="modal-title" id="myModalLabel">
+									设置主题/标签
+								</h4>
+							</div>
+							<div class="modal-body">
+								<div class="sub_add">
+									<input type="text" class="layui-input " name="subtitle"/>
+									<button class="add btn " type="button">添加</button>
+								</div>
+									
+								  <table class="layui-table">
+								    <colgroup>
+								      <col width="">
+								   	   <col width="100">
+								      
+								    </colgroup>
+								    <thead>
+								      <tr>
+								        <th>专题</th>
+								        <th>操作</th>
+								      </tr> 
+								    </thead>
+								    <tbody id="sublist">
+
+								     </tbody>
+								     </table>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default" data-dismiss="modal">关闭
+								</button>
+								<button type="button" class="btn btn-primary">
+									提交
+								</button>
+							</div>
+						</div>
+					<script th:src="@{/js/modules/topic.js}"></script>
+					</div>
+				</div> 
+
+			</div>
+
+		</div>
+			
+	</div>	
+</body>
+</html>

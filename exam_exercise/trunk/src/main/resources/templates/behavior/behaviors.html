@@ -1,0 +1,156 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout">
+<head>
+	<meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<title>行为管理</title>
+</head>
+<body>
+
+<div layout:fragment="content">
+	<div class=" pull-left main-content">
+		<div class="content-item">
+			<p class="title">行为管理</p>
+			<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+				<ul class="layui-tab-title">
+					<li class="layui-this" th:value="0">登录</li>
+					<li th:value="1">登出</li>
+					<li th:value="2">下载</li>
+				</ul>
+				<div class="layui-tab-content">
+					<form class="layui-form search-form" action="">
+						<input type="hidden" name="type" value="" th:value="${type}"/>
+						<div class="layui-form-item">
+							<div class="layui-inline">
+								<label class="layui-form-label">姓名：</label>
+								<div class="layui-input-inline">
+									<input type="text" name="name" th:value="${name}" autocomplete="off" class="layui-input">
+								</div>
+							</div>
+							<div class="layui-inline">
+								<label class="layui-form-label">邮箱：</label>
+								<div class="layui-input-inline">
+									<input type="text" name="email" th:value="${email}" autocomplete="off" class="layui-input">
+								</div>
+							</div>
+							<button class="btn" id="typeBtn">查询</button>
+						</div>
+					</form>
+					<div class="layui-tab-item layui-show" data-type="1">
+						<table class="layui-table" lay-skin="line">
+							<colgroup width="250"></colgroup>
+							<colgroup width=""></colgroup>
+							<colgroup width="300"></colgroup>
+							<colgroup width="200"></colgroup>
+							<colgroup width="200"></colgroup>
+							<colgroup width="300"></colgroup>
+							<thead>
+							<tr>
+								<th>姓名</th>
+								<th>邮箱</th>
+								<th>IP</th>
+								<th>省</th>
+								<th>市</th>
+								<th>登录时间</th>
+							</tr>
+							</thead>
+							<tbody>
+							<tr th:each="loginRecord:${loginRecords}">
+								<td th:text="${loginRecord.person.name}"></td>
+								<td th:text="${loginRecord.person.email}"></td>
+								<td th:text="${loginRecord.ip}"></td>
+								<td th:text="${loginRecord.province}"></td>
+								<td th:text="${loginRecord.city}"></td>
+								<td th:text="${#calendars.format(loginRecord.createAt,'yyyy-MM-dd HH:mm:ss')}"></td>
+							</tr>
+							<tr th:if="${#lists.isEmpty(loginRecords)}">
+								<td colspan="6" th:text="暂无数据"></td>
+							</tr>
+							</tbody>
+						</table>
+						<div th:if="${loginRecords != null}" th:include="page :: pager(${loginRecords})" th:remove="tag"></div>
+					</div>
+					<div class="layui-tab-item" data-type="1">
+						<table class="layui-table" lay-skin="line">
+							<colgroup width="250"></colgroup>
+							<colgroup width=""></colgroup>
+							<colgroup width="300"></colgroup>
+							<colgroup width="300"></colgroup>
+							<thead>
+							<tr>
+								<th>姓名</th>
+								<th>邮箱</th>
+								<th>在线时间</th>
+								<th>登出时间</th>
+							</tr>
+							</thead>
+							<tbody>
+							<tr th:each="logoutRecord:${logoutRecords}">
+								<td th:text="${logoutRecord.person.name}"></td>
+								<td th:text="${logoutRecord.person.email}"></td>
+								<td th:text="${logoutRecord.durationStr}"></td>
+								<td th:text="${#calendars.format(logoutRecord.createAt,'yyyy-MM-dd HH:mm:ss')}"></td>
+							</tr>
+							<tr th:if="${#lists.isEmpty(logoutRecords)}">
+								<td colspan="6" th:text="暂无数据"></td>
+							</tr>
+							</tbody>
+						</table>
+						<div th:if="${logoutRecords != null}" th:include="page :: pager(${logoutRecords})" th:remove="tag"></div>
+					</div>
+					<div class="layui-tab-item" data-type="1">
+						<table class="layui-table" lay-skin="line">
+							<colgroup width="250"></colgroup>
+							<colgroup width=""></colgroup>
+							<colgroup width=""></colgroup>
+							<colgroup width="250"></colgroup>
+							<thead>
+							<tr>
+								<th>姓名</th>
+								<th>邮箱</th>
+								<th>题干</th>
+								<th>下载时间</th>
+							</tr>
+							</thead>
+							<tbody>
+							<tr th:each="downloadQuestionRecord:${downloadQuestionRecords}">
+								<td th:text="${downloadQuestionRecord.person.name}"></td>
+								<td th:text="${downloadQuestionRecord.person.email}"></td>
+								<td th:text="${downloadQuestionRecord.title}"></td>
+								<td th:text="${#calendars.format(downloadQuestionRecord.createAt,'yyyy-MM-dd HH:mm:ss')}"></td>
+							</tr>
+							<tr th:if="${#lists.isEmpty(downloadQuestionRecords)}">
+								<td colspan="6" th:text="暂无数据"></td>
+							</tr>
+							</tbody>
+						</table>
+						<div th:if="${downloadQuestionRecords != null}" th:include="page :: pager(${downloadQuestionRecords})" th:remove="tag"></div>
+						<script>
+						$(function () {
+							$(".layui-tab-title").find("li").click(function () {
+								$("input[name=type]").attr("value", $(this).val());
+								$("#typeBtn").click();
+							});
+		
+							var type = getUrlParam('type');
+							$(".layui-tab-title").find("li").removeClass("layui-this");
+							$(".layui-tab-title").find("li").eq(type).addClass("layui-this");
+							$(".layui-tab-item").removeClass("layui-show");
+							$(".layui-tab-item").eq(type).addClass("layui-show");
+		
+							function getUrlParam(name) {
+								var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+								var r = window.location.search.substr(1).match(reg);
+								if (r != null) return unescape(r[2]);
+								return null;
+							}
+						})
+					</script>
+					</div>
+				</div>
+			</div>
+		</div>
+</div>
+</body>
+</html>

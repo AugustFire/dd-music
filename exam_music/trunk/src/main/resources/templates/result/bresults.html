@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorator="layout">
+<head>
+<meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script th:src="@{/js/modules/exam.js}"></script>
+<title>偏差较大打分</title>
+</head>
+<body>
+	<div layout:fragment="content">
+		<div class=" pull-left main-content">
+			<div class="content-item">
+				<p class="title"><a class="goback" title="返回" href="javascript:history.back();" ></a>偏差较大打分</p>
+				<table class="layui-table" lay-skin="line">
+					<colgroup>
+						<col width="80">
+						<col width="150">
+						<col width="150">
+						<col width="150">
+						<col>
+						<col width="150">
+						<col width="150">
+						<col width="80">
+						<col width="80">
+					</colgroup>
+					<thead>
+						<tr>
+							<th>考生</th>
+							<th>考号</th>
+							<th>考试</th>
+							<th>考卷</th>
+							<th>考题</th>
+							<th>专家平均分</th>
+							<th>机器评分</th>
+							<th>专家</th>
+							<th>打分</th>
+							<th>偏差</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:if="${results != null}" th:each="result : ${results}">
+							<td th:text="${result.examinee.person.name}"></td>
+							<td th:text="${result.examinee.examNo}"></td>
+							<td th:text="${result.exam.title}"></td>
+							<td th:text="${result.examPaper.title}"></td>
+							<td th:text="${result.qtitle}"></td>
+							<td th:text="${result.avgScore}"></td>
+							<td th:text="${null== result.mscore ? 0 : result.mscore}"></td>
+							<td th:text="${result.expert.person.name}"></td>
+							<td th:text="${result.score}"></td>
+							<td th:text="${result.score - result.avgScore}"></td>
+						</tr>
+						<tr th:if="${#lists.isEmpty(results)}">
+							<td colspan="10">暂无数据</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

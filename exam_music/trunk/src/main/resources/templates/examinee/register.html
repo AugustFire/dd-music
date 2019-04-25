@@ -1,0 +1,140 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" th:href="@{/css/layui/css/layui.css}" />
+<script th:src="@{/css/layui/layui.js}"></script>
+<link rel="stylesheet" th:href="@{/css/session/reset.css}">
+<link rel="stylesheet" th:href="@{/css/session/style.css}">
+<title>考生注册</title>
+</head>
+<style type="text/css">
+body {
+	background: url(/images/bg2.jpg)  #1B110F;
+	background-attachment:fixed
+}
+.wrap-login .login .content-wrap {
+	margin-top: 0px;
+}
+</style>
+
+<body>
+	<div class="wrap-login" style="margin-top:-80px;">
+		<div class="login">
+			<img th:src="@{/images/boxTop.png}" height="114" width="631" alt=""/>
+			<form th:action="@{/register}" method="post" id="register_form"
+				enctype="multipart/form-data" class="form-horizontal" role="form">
+				<div class="content-wrap register">
+					<div class="content">
+						<p class="title">考生注册</p>
+						<div class="item">
+							<span class="session-span">姓名：</span>
+							<input type="text" id="name" class="form-control" name="name" th:value="${param.name}"/>
+						</div>
+						<div class="item">
+							<span class="session-span">用户名：</span>
+							<input type="text" id="login" class="form-control" name="login" />
+						</div>
+						<div class="item">
+							<span class="session-span">密码：</span>
+							<input type="password" id="password" class="form-control" name="password" autoComplete="off"/>
+						</div>
+						<div class="item">
+							<span class="session-span">确认密码：</span>
+							<input type="password" id="repassword" class="form-control" name="repassword" autoComplete="off" />
+						</div>
+						<div class="item">
+							<span class="session-span">年龄：</span>
+							<input type="text" id="age" class="form-control" name="age" onkeyup="this.value=this.value.replace(/\D/g,'')"/>
+						</div>
+						<div class="item">
+							<span class="session-span">手机：</span>
+							<input type="text" id="phone" class="form-control" name="phone" onkeyup="this.value=this.value.replace(/\D/g,'')"/>
+						</div>
+						<div class="session-item">
+							<span class="session-span">性别：</span>
+							<input type="radio" id="MAN" class="form-control" name="gender" value="MAN" checked="checked" /> <label for="MAN">男</label> &nbsp;&nbsp;
+							<input type="radio" id="WOMAN" class="form-control" name="gender" value="WOMAN" /> <label for="WOMAN">女</label>
+						</div>
+						<div class="item">
+							<span class="session-span">邮箱：</span>
+							<input type="text" id="email" class="form-control" name="email"/>
+						</div>
+						<div class="item">
+							<span class="session-span">身份证：</span>
+							<input type="text" id="idcard" class="form-control" name="idcard"/>
+						</div>
+						<div class="item">
+							<span class="session-span">准考证：</span>
+							<input type="text" id="examNo" class="form-control" name="examNo"/>
+						</div>
+						<div class="item">
+							<span class="session-span">学校：</span>
+							<input type="text" id="school" class="form-control" name="school"/>
+						</div>
+						<div class="item" style="border:none;">
+							<span class="session-span">拍摄照片：</span> 
+							<div class="photo">
+								<video id="video" width="200" height="150"></video>
+								<button type="button" id='tack'>点击拍照</button>
+								<canvas id='canvas' width='200' height='150' style="display:none;"></canvas>
+								<img id='img' width=200 height=150 src="" style="display:none;" />
+								<input type="hidden" id="imgData" name="imgData">
+							</div>
+						</div>
+						<script>
+							var video = document.getElementById('video'), 
+							canvas = document.getElementById('canvas'), 
+							snap = document.getElementById('tack'),
+							img = document.getElementById('img'),
+							imgData = document.getElementById('imgData'),
+							vendorUrl = window.URL || window.webkitURL;
+							//媒体对象
+							navigator.getMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+							navigator.getMedia({
+								video : true, //使用摄像头对象
+								audio : false
+							//不适用音频
+							}, function(strem) {
+								video.src = vendorUrl.createObjectURL(strem);
+								video.play();
+							}, function(error) {
+								//error.code
+								/* alert(error.code); */
+							});
+							snap.addEventListener('click', function() {
+								//绘制canvas图形
+								canvas.getContext('2d').drawImage(video, 0, 0, 200, 150);
+								//把canvas图像转为img图片
+								img.src = canvas.toDataURL("image/png");
+								imgData.value = canvas.toDataURL("image/png");
+							})
+						</script>
+						<button type="submit" class="btn">注&nbsp;&nbsp;册</button>
+						<div class="link">
+							<a th:href="@{/user/find_password}">忘记密码</a>/<a th:href="@{/session}">登录</a>
+							<div class="error-msg" th:text="${warning}"></div>
+							<div class="error-text" th:text="${examinee}" style="display: none;"></div>
+						</div>
+					</div>
+				</div>
+			</form>
+			<img th:src="@{/images/boxBottom.png}" height="126" width="631" alt="" />
+		</div>
+	</div>
+<script th:src="@{/js/lib/jquery-3.2.0.min.js}"></script>
+<script th:src="@{/js/lib/jquery.validate.min.js}"></script>
+<script th:src="@{/js/lib/bootstrap.min.js}"></script>
+<script th:src="@{/js/modules/valid.js}"></script>
+<script>
+$(function(){
+	$("#tack").click(function(){
+		$("#img").css("display","block");
+	})
+	
+})
+
+</script>
+</body>
+</html>

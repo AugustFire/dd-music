@@ -1,0 +1,313 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorator="layout">
+<head>
+<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title th:if="${exam !=null}">编辑考试</title>
+<title th:if="${exam ==null}">添加考试</title>
+</head>
+<body>
+	<div layout:fragment="content">
+		<div class=" pull-left main-content">
+			<div class="content-item">
+				<p class="title" th:if="${exam !=null}"><a class="goback" title="返回" href="javascript:history.back();" ></a>编辑考试</p>
+				<p class="title" th:if="${exam ==null}"><a class="goback" title="返回" href="javascript:history.back();" ></a>添加考试</p>
+				<form th:if="${exam == null}" th:action="@{/exam2}" method="post" id="examAdd_form">
+					<div class="content">
+						<div class="layui-form-item">
+							<label class="layui-form-label">考试名称：</label>
+							<div class="layui-input-block">
+								<input type="text" id="title" name="title" placeholder="考试名称" class="layui-input" />
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">考试简介：</label>
+							<div class="layui-input-block">
+								<textarea id="intro" name="intro" placeholder="考试简介" class="layui-textarea"></textarea>
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">开始时间：</label>
+							<div class="layui-input-block">
+								<input type="text" class="layui-input" id="startAt"
+									onclick="WdatePicker({maxDate:'#F{$dp.$D(\'endAt\')}',lang:'zh-cn',dateFmt:'yyyy-MM-dd HH:mm:ss'})"
+									name="startAt" placeholder="开始时间" readonly="readonly" />
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">结束时间：</label>
+							<div class="layui-input-block">
+								<input type="text" class="layui-input" id="endAt"
+									onclick="WdatePicker({minDate:'#F{$dp.$D(\'startAt\')}',lang:'zh-cn',dateFmt:'yyyy-MM-dd HH:mm:ss'})"
+									name="endAt" placeholder="结束时间" readonly="readonly" />
+							</div>
+						</div>
+						<div class="layui-form-item"  id="set-pager" >
+							<label class="layui-form-label">选择科目：</label>
+							<div class="layui-input-block lh36 w70">
+								<button type="button"  data-id="1" class="gray-btn" data-toggle="modal" data-target="#Modal">乐理</button>
+								<button type="button"  data-id="2" class="gray-btn" data-toggle="modal" data-target="#Modal">听音</button>
+								<button type="button"  data-id="3" class="gray-btn" data-toggle="modal" data-target="#Modal">视唱</button>
+							</div>
+						</div>
+						<div class="layui-form-item" >
+							<label class="layui-form-label">添加考点：</label>
+							<div class="layui-input-block lh36 w70">
+								<button type="button" class="gray-btn" id="test-items" data-toggle="modal" data-target="#test-Modal">添加考点</button>
+							</div>
+						</div>
+						<div class="layui-form-item" style="display:none;">
+							<label class="layui-form-label">已选考点：</label>
+							<div class="layui-input-block lh36 w70" id="checked-kaodian">
+								
+							</div>
+						</div>
+						<button class="submitbtn btn" type="submit">确定</button>
+						<a th:href ="@{/exams}" class="edit btn">返回</a>
+
+						<div id="hidden">
+							<input type="hidden" name="pids" id="check-kaodian" value="" />
+							<div data-id="1" data-title="乐理">
+								<input type="hidden" name="yueliTitle" data-title="乐理试卷名称" />
+								<input type="hidden" name="yueliResolvedTime" data-title="考试时间" />
+								<input type="hidden" name="yueliScore" data-title="总分" />
+								<input type="hidden" name="yueliSingleTotalScore" data-title="单选题总分" />
+								<input type="hidden" name="yueliSingleNum" data-title="单选题题数" />
+								<input type="hidden" name="yueliSingleScore" data-title="单选题小题分数" />
+								<input type="hidden" name="yueliMultiTotalScore" data-title="多选题总分" />
+								<input type="hidden" name="yueliMultiNum" data-title="多选题小题数" />
+								<input type="hidden" name="yueliMultiScore" data-title="多选题小题分数" />
+								<input type="hidden" name="yueliShortTotalScore" data-title="简答题总分" />
+								<input type="hidden" name="yueliShortNum" data-title="简答题小题数" />
+								<input type="hidden" name="yueliShortScore" data-title="简答题小题分数" />
+							</div>
+							<div data-id="2" data-title="听音">
+								<input type="hidden" name="tingyinTitle" data-title="听音试卷名称" />
+								<input type="hidden" name="tingyinResolvedTime" data-title="考试时间" />
+								<input type="hidden" name="tingyinShortTotalScore" data-title="总分" />
+								<input type="hidden" name="tingyinShortNum"  data-title="小题数" />
+								<input type="hidden" name="tingyinShortScore" data-title="tingyinShortScore" />
+							</div>
+							<div data-id="3" data-title="视唱">
+								<input type="hidden" name="lookSingTitle" data-title="视唱试卷名称" />
+								<input type="hidden" name="lookSingResolvedTime" data-title="考试时间" />
+								<input type="hidden" name="lookSingTotalScore" data-title="总分" />
+								<input type="hidden" name="lookSingNum" data-title="小题数" />
+								<input type="hidden" name="lookSingScore" data-title="小题分数" />
+							</div>
+						</div> 
+						<!-- 模态框（Modal） -->
+						<div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+							<div class="modal-dialog">
+								<div class="modal-content">
+									<div class="modal-header">
+										<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+											&times;
+										</button>
+										<h4 class="modal-title" id="myModalLabel"></h4>
+									</div>
+									<div class="modal-body">
+										<div class="list-step">
+											<div class="layui-form-item">
+												<label class="layui-form-label">考卷名称：</label>
+												<div class="layui-input-block">
+													<input type="text" name="name" class="layui-input" id="Title" />
+												</div>
+											</div>
+											<button type="button" class="btn next-btn">下一步</button>
+										</div> 
+										<div class="list-step" style="display:none;">
+											<div class="layui-form-item">
+												<label class="layui-form-label">考试时间(秒)：</label>
+												<div class="layui-input-block">
+													<input type="text" name="time" class="layui-input" id="testtime" />
+												</div>
+											</div>
+											<button type="button" class="btn pre-btn">上一步</button>
+											<button type="button" class="btn next-btn">下一步</button>
+										</div> 
+										<div class="list-step" style="display:none;">
+											<div class="layui-form-item">
+												<label class="layui-form-label">总分：</label>
+												<div class="layui-input-block">
+													<input type="text" name="points" class="layui-input" id="points" />
+												</div>
+											</div>
+											<button type="button" class="btn pre-btn" >上一步</button>
+											<button type="button" class="btn next-btn" id="checknext">下一步</button>
+										</div> 
+										<div class="list-step" style="display:none;" id="othertype">
+											<div class="layui-form-item">
+												<label class="layui-form-label">小题数：</label>
+												<div class="layui-input-block">
+													<input type="text" name="num" class="layui-input" id="num" />
+												</div>
+											</div>
+											<div class="layui-form-item" >
+												<label class="layui-form-label">小题分数：</label>
+												<div class="layui-input-block">
+													<input type="text" name="point" class="layui-input" id="point" disabled="disabled" />
+												</div>
+											</div>
+
+											<button type="button" class="btn pre-btn">上一步</button>
+											<button type="button" class="btn submit-btn">完成</button>
+										</div> 
+										
+										<div class="list-step" id="yueliitems" style="display:none;">
+											<div class="layui-form-item">
+												<label class="layui-form-label">单选题总分：</label>
+												<div class="layui-input-block">
+													<input type="text" name="yueliSingleTotalScore" class="layui-input question-totalscore" id="yueliSingleTotalScore" />
+												</div>
+											</div>
+											<div class="layui-form-item">
+												<label class="layui-form-label">小题数：</label>
+												<div class="layui-input-block">
+													<input type="text" name="yueliSingleNum" class="layui-input question-num" id="yueliSingleNum" />
+												</div>
+											</div>
+											<div class="layui-form-item" >
+												<label class="layui-form-label">小题分数：</label>
+												<div class="layui-input-block">
+													<input type="text" name="yueliSingleScore" class="layui-input question-score" id="yueliSingleScore" disabled="disabled" />
+												</div>
+											</div>
+											<div class="layui-form-item">
+												<label class="layui-form-label">多选题总分：</label>
+												<div class="layui-input-block">
+													<input type="text" name="yueliMultiTotalScore" class="layui-input question-totalscore" id="yueliMultiTotalScore" />
+												</div>
+											</div>
+											<div class="layui-form-item">
+												<label class="layui-form-label">小题数：</label>
+												<div class="layui-input-block">
+													<input type="text" name="yueliMultiNum" class="layui-input question-num" id="yueliMultiNum" />
+												</div>
+											</div>
+											<div class="layui-form-item" >
+												<label class="layui-form-label">小题分数：</label>
+												<div class="layui-input-block">
+													<input type="text" name="yueliMultiScore" class="layui-input question-score" id="yueliMultiScore" disabled="disabled" />
+												</div>
+											</div>
+											<div class="layui-form-item">
+												<label class="layui-form-label">简答题总分：</label>
+												<div class="layui-input-block">
+													<input type="text" name="yueliShortTotalScore" class="layui-input question-totalscore" id="yueliShortTotalScore" />
+												</div>
+											</div>
+											<div class="layui-form-item">
+												<label class="layui-form-label">小题数：</label>
+												<div class="layui-input-block">
+													<input type="text" name="yueliShortNum" class="layui-input question-num" id="yueliShortNum" />
+												</div>
+											</div>
+											<div class="layui-form-item" >
+												<label class="layui-form-label">小题分数：</label>
+												<div class="layui-input-block">
+													<input type="text" name="yueliShortScore" class="layui-input question-score" id="yueliShortScore" disabled="disabled" />
+												</div>
+											</div>
+											<button type="button" class="btn pre-btn" id="checkprev" >上一步</button>
+											<button type="button" class="btn submit-btn">完成</button>
+										</div> 
+									</div>
+								</div><!-- /.modal-content -->
+							</div><!-- /.modal -->
+						</div>
+						
+						
+						<!-- 模态框（Modal） -->
+						<div class="modal fade" id="test-Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+							<div class="modal-dialog">
+								<div class="modal-content">
+									<div class="modal-header">
+										<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+										<h4 class="modal-title" id="myModalLabel">添加考点</h4>
+									</div>
+									<div class="modal-body">
+										<div class="list-step">
+											<div class="layui-form-item">											
+												<div class="setweight" id="kaodianlist">
+												<script type="text/html" id="lists">
+													{{each list as item i}}
+													<div class="kaodian" style="display:inline-block;position:relative;">
+														<input type="checkbox" class="w10 firstcheck" id="{{item.id}}" data-id="{{item.id}}"/>
+														<label for="{{item.id}}">{{item.name}}</label>
+														</div>
+														<div class="kaodian-lists" style="display:none;">
+															{{each item.rooms as ro}}
+															<p>
+															<label for="{{ro.id}}">{{ro.name}}</label>
+															</p>
+															{{/each}}
+														</div>
+													{{/each}}
+													</script> 
+												</div>
+										</div>
+										</div> 
+									</div>
+									<div class="modal-footer">	
+										<button type="submit" class="btn btn-primary" id="kaodianbtn">确定</button>
+										<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+									</div>
+								</div><!-- /.modal-content -->
+							</div><!-- /.modal -->
+						</div>
+					</div>
+				</form>
+
+				<form th:if="${exam != null}" th:action="@{'/exam/'+${exam.id}}" method="post" id="examEdit_form">
+					<div class="content">
+						<div class="layui-form-item">
+							<label class="layui-form-label">考试名称：</label>
+							<div class="layui-input-block">
+								<input type="text" id="title" name="title" th:value="${exam.title}" class="layui-input" />
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">考试简介：</label>
+							<div class="layui-input-block">
+								<textarea id="intro" name="intro" th:text="${exam.intro}" class="layui-textarea"></textarea>
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">开始时间：</label>
+							<div class="layui-input-block">
+								<input type="text" class="layui-input" id="startAt" th:value="${#calendars.format(exam.startAt,'yyyy-MM-dd HH:mm:ss')}" 
+									onclick="WdatePicker({maxDate:'#F{$dp.$D(\'endAt\')}',lang:'zh-cn',dateFmt:'yyyy-MM-dd HH:mm:ss'})"
+									name="startAt" placeholder="开始时间" readonly="readonly" />
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">结束时间：</label>
+							<div class="layui-input-block">
+								<input type="text" class="layui-input" id="endAt" th:value="${#calendars.format(exam.endAt,'yyyy-MM-dd HH:mm:ss')}"
+									onclick="WdatePicker({minDate:'#F{$dp.$D(\'startAt\')}',lang:'zh-cn',dateFmt:'yyyy-MM-dd HH:mm:ss'})"
+									name="endAt" placeholder="结束时间" readonly="readonly" />
+							</div>
+						</div>
+						<div class="layui-form-item" id="set-pager" >
+							<label class="layui-form-label">已有考点：</label>
+							<div class="layui-input-block lh36 w70">
+								<div class="setweight"  th:each="examPoint : ${examPoints}">
+								<!-- 	<input type="checkbox" name="pids" lay-skin="primary"  th:text="${examPoint.name}" > -->
+									<input type="checkbox" class="w10" name="pids" th:value="${examPoint.id}" th:id="${examPoint.id}" th:checked="${#lists.contains(exam.examPoints, examPoint)}">
+									<label th:for="${examPoint.id}" th:text="${examPoint.name}" ></label>
+								</div>
+							</div>
+						</div>
+						<button type="submit" class="submit-button btn">确定</button>
+						<a th:href ="@{/exams}" class="edit btn">返回</a>
+					</div>
+				</form>
+				<script th:src="@{/js/My97DatePicker/WdatePicker.js}"></script>
+				<script th:src="@{/js/lib/template-web.js}"></script>	
+				<script th:src="@{/js/modules/exam.js}"></script>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
