@@ -6,7 +6,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.nercl.music.cloud.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,12 +30,6 @@ import com.nercl.music.cloud.entity.ExamPaperQuestion;
 import com.nercl.music.cloud.entity.Option;
 import com.nercl.music.cloud.entity.Question;
 import com.nercl.music.cloud.entity.QuestionType;
-import com.nercl.music.cloud.service.AnswerRecordService;
-import com.nercl.music.cloud.service.ExamPaperQuestionService;
-import com.nercl.music.cloud.service.ExamPaperService;
-import com.nercl.music.cloud.service.OptionService;
-import com.nercl.music.cloud.service.PendingScoredProducer;
-import com.nercl.music.cloud.service.QuestionService;
 import com.nercl.music.constant.ApiClient;
 import com.nercl.music.constant.CList;
 import com.nercl.music.util.QuestionToJsonUtil;
@@ -100,6 +96,11 @@ public class AnswerRecordController {
 		return ret;
 	}
 
+	/**
+	 * 提交答卷/答题
+	 * @param answer
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	@PostMapping(value = "/answer", produces = JSON_PRODUCES)
 	public Map<String, Object> save(String answer) {
@@ -192,6 +193,7 @@ public class AnswerRecordController {
 				}
 			}
 
+			//创建作答详情
 			AnswerRecord ar = new AnswerRecord();
 			ar.setAnswer(answ);
 			ar.setQuestionId(questionId);
@@ -243,13 +245,18 @@ public class AnswerRecordController {
 		});
 		rids.forEach(rid -> {
 			AnswerRecord record = answerRecordService.findById(rid);
+			//答卷评分,停用JMS,使用多线程
 			addScoredQueue(record);
 		});
 		ret.put("code", CList.Api.Client.OK);
 		return ret;
 	}
 
-	private void addScoredQueue(AnswerRecord answerRecord) {
+	@Autowired
+	private PendingScoredConsumer consumer;
+
+	@Async
+	void addScoredQueue(AnswerRecord answerRecord) {
 		if (null == answerRecord) {
 			return;
 		}
@@ -258,10 +265,12 @@ public class AnswerRecordController {
 			return;
 		}
 		if (QuestionType.SHORT_ANSWER == question.getQuestionType()) {
-			pendingScoredProducer.sendShortScoredMessage(answerRecord.getId());
+//			pendingScoredProducer.sendShortScoredMessage(answerRecord.getId());
+			consumer.receiveShortPengdingScoreQueue(answerRecord.getId());
 		}
 		if (question.isSingQuestion()) {
-			pendingScoredProducer.sendSingScoredMessage(answerRecord.getId());
+//			pendingScoredProducer.sendSingScoredMessage(answerRecord.getId());
+			consumer.receiveSingPengdingScoreQueue(answerRecord.getId());
 		}
 	}
 
@@ -300,8 +309,8 @@ public class AnswerRecordController {
 	 * 
 	 * @param score
 	 *            评分分数
-	 * @param comment
-	 *            点评内容
+	 * @param
+	 *
 	 */
 	@PutMapping(value = "/answer/{recordId}", produces = JSON_PRODUCES)
 	public Map<String, Object> markTaskAnswer(@PathVariable String recordId, @RequestParam Float score,

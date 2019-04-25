@@ -1,3 +1,4 @@
+/*
 package com.nercl.music.cloud;
 
 import javax.jms.Topic;
@@ -10,6 +11,7 @@ import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
 import org.springframework.jms.config.JmsListenerContainerFactory;
 import org.springframework.jms.core.JmsMessagingTemplate;
 
+//停用JMS
 @Configuration
 public class MqConfig {
 	
@@ -49,3 +51,4 @@ public class MqConfig {
     }
 
 }
+*/

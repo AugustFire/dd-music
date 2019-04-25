@@ -23,7 +23,8 @@ public class AnswerRecordDaoImpl extends AbstractBaseDaoImpl<AnswerRecord, Strin
 	@Override
 	public List<AnswerRecord> get(String classroomId, String qid) {
 		String jpql = "from AnswerRecord ar where ar.classRoomId = ?1 and ar.questionId = ?2";
-		List<AnswerRecord> answerRecords = this.executeQueryWithoutPaging(jpql, qid);
+		//修改了之前缺少classroomId参数的bug
+		List<AnswerRecord> answerRecords = this.executeQueryWithoutPaging(jpql,classroomId,qid);
 		return answerRecords;
 	}
 
