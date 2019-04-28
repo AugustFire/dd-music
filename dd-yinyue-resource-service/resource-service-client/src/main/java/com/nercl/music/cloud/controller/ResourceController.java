@@ -172,6 +172,7 @@ public class ResourceController {
 			String fileName =  URLEncoder.encode(r.getName(), "utf-8");
 			  response.setContentType(getContentType(ext) + ";charset=UTF-8");
 			  response.addHeader("Content-Disposition", "filename="+ fileName);
+			response.setContentType("application/force-download");
 		} catch (Exception e) {
 			   e.printStackTrace();  
 		}
