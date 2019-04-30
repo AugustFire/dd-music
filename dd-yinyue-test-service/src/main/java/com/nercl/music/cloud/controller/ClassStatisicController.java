@@ -21,6 +21,9 @@ import com.nercl.music.cloud.service.KnowledgeService;
 import com.nercl.music.constant.CList;
 import com.nercl.music.util.GraspValueUtil;
 
+/**
+ *班级统计分析
+ */
 @RestController
 public class ClassStatisicController {
 

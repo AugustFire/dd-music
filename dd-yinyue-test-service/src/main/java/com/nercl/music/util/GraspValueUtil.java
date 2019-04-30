@@ -65,16 +65,20 @@ public class GraspValueUtil {
 	// return getGraspValue(records) / records.size();
 	// }
 
+	/**
+	 * 判断当前时间是上半学期还是下班学期,并返回对应年份的学期开始时间的毫秒值
+	 * @return
+	 */
 	public Long getStart() {
 		Long start = null;
 		int year = LocalDate.now().getYear();
 		int month = LocalDate.now().getMonthValue();
 		try {
-			if (month >= 9) {
+			if (month >= 9) {//今年下学期09.01日开始
 				start = new SimpleDateFormat("yyyy-MM-dd").parse(year + "-9-1").getTime();
-			} else if (month <= 2) {
+			} else if (month <= 2) {//去年下学期09.01日开始
 				start = new SimpleDateFormat("yyyy-MM-dd").parse(year - 1 + "-9-1").getTime();
-			} else {
+			} else {//今年上学期03.01日开始
 				start = new SimpleDateFormat("yyyy-MM-dd").parse(year + "-3-1").getTime();
 			}
 		} catch (ParseException e) {
@@ -83,16 +87,20 @@ public class GraspValueUtil {
 		return start;
 	}
 
+	/**
+	 * 判断当前时间是上半学期还是下半学期,并返回对应年份的学期结束时间的毫秒值
+	 * @return
+	 */
 	public Long getEnd() {
 		Long end = null;
 		int year = LocalDate.now().getYear();
 		int month = LocalDate.now().getMonthValue();
 		try {
-			if (month >= 9) {
+			if (month >= 9) {//今年下学期在第二年的02.20日结束
 				end = new SimpleDateFormat("yyyy-MM-dd").parse(year + 1 + "-2-20").getTime();
-			} else if (month <= 2) {
+			} else if (month <= 2) {//去年下学期在今年的02.20日结束
 				end = new SimpleDateFormat("yyyy-MM-dd").parse(year + "-2-20").getTime();
-			} else {
+			} else {//今年上学期在今年的08.30日结束
 				end = new SimpleDateFormat("yyyy-MM-dd").parse(year + "-8-31").getTime();
 			}
 		} catch (ParseException e) {

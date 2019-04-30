@@ -595,6 +595,15 @@ public class ClassStatisicServiceImpl2 implements ClassStatisicService2 {
 		return questions;
 	}
 
+	/**
+	 * 根据知识点查询试题
+	 * @param cid 班级id
+	 * @param knowledgeNo 知识点编号
+	 * @param source 题目来源
+	 * @param start 学期开始
+	 * @param end	学期结束
+	 * @return
+	 */
 	@Override
 	public List<Map<String, Object>> getQuestionsByKnowledge(String cid, String knowledgeNo, AnswerSource source,
 			long start, long end) {
@@ -603,6 +612,7 @@ public class ClassStatisicServiceImpl2 implements ClassStatisicService2 {
 			return null;
 		}
 		List<Map<String, Object>> questions = Lists.newArrayList();
+		//并行执行流,过滤筛选出question不为空,以及question中knowledges属性字符串是否包含knowledgeNo对应的值
 		records.parallelStream().filter(record -> {
 			Question question = record.getQuestion();
 			return null != question && Strings.nullToEmpty(question.getKnowledges()).contains(knowledgeNo);
