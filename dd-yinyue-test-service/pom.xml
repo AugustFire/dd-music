@@ -263,21 +263,8 @@
 	</dependencies>
 
 	<build>
+		<finalName>test-service</finalName>
 		<plugins>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-					<encoding>UTF-8</encoding>
-					<fork>true</fork>
-					<compilerArguments>
-						<nowarn />
-					</compilerArguments>
-					<showWarnings>true</showWarnings>
-				</configuration>
-			</plugin>
-
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
