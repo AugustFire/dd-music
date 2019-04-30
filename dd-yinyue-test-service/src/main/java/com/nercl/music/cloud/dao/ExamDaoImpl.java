@@ -63,7 +63,7 @@ public class ExamDaoImpl extends AbstractBaseDaoImpl<Exam, String> implements Ex
 
 	@Override
 	public List<Exam> get(long beginAt, long endAt) {
-		String jpql = "from Exam ex where ex.startAt >= ?1 and ex.endAt <= ?2";
+		String jpql = "from Exam ex where ex.startAt >= ?1 and ex.endAt <= ?2 order by ex.createAt";
 		return this.executeQueryWithoutPaging(jpql, beginAt, endAt);
 	}
 
