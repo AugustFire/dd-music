@@ -37,6 +37,7 @@ import com.nercl.music.constant.CList;
 import com.nercl.music.util.PropertiesUtil;
 
 @RestController
+@SuppressWarnings("all")
 public class ResourceController {
 
 	private static final String JSON_PRODUCES = "application/json;charset=UTF-8";
@@ -98,6 +99,15 @@ public class ResourceController {
 		return ret;
 	}
 
+	/**
+	 * 文件上传
+	 * (注意返回的是资源Id,而不是文件ID)
+	 * @param json
+	 * @param name
+	 * @param request
+	 * @return 资源id
+	 * @throws IOException
+	 */
 	@PostMapping(value = "/", produces = JSON_PRODUCES)
 	public Map<String, Object> upload(String json, String name, HttpServletRequest request) throws IOException {
 		Map<String, Object> ret = Maps.newHashMap();
@@ -172,6 +182,7 @@ public class ResourceController {
 			String fileName =  URLEncoder.encode(r.getName(), "utf-8");
 			  response.setContentType(getContentType(ext) + ";charset=UTF-8");
 			  response.addHeader("Content-Disposition", "filename="+ fileName);
+			response.setContentType("application/force-download");
 		} catch (Exception e) {
 			   e.printStackTrace();  
 		}

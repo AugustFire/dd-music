@@ -327,15 +327,17 @@ public class TaskController {
 		try {
 			TaskQuestion tq = new TaskQuestion();
 			tq.setTaskId(taskId);
+			// 查询task下的所有题目
 			List<TaskQuestion> list = taskQuestionService.findByConditions(tq);
 			list.forEach(li -> {
 				Map<String, Object> questionAnswerMap = Maps.newHashMap();
+				// 根据问题Id
 				Map map = restTemplate.getForObject(ApiClient.GET_USER_QUESTION, Map.class, li.getQuestionId(), userId);
 				map.remove("code");
 				questionAnswerMap.put("question", map);
 				try {
 					Map<String, Object> answers = restTemplate.getForObject(ApiClient.GET_USER_ANSWER, Map.class,
-							li.getQuestionId(), userId);
+							li.getQuestionId(), userId,taskId);
 					if (null != answers) {
 						Map<String, Object> an = (Map<String, Object>) answers.get("answer");
 						if (null != an) {

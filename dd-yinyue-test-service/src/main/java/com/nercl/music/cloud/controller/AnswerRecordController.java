@@ -63,9 +63,6 @@ public class AnswerRecordController {
 	@Autowired
 	private QuestionToJsonUtil questionToJsonUtil;
 
-	@Autowired
-	private PendingScoredProducer pendingScoredProducer;
-
 	@GetMapping(value = "/answers", produces = JSON_PRODUCES)
 	public Map<String, Object> getAnswers(String qid, String classRoomId) {
 		Map<String, Object> ret = Maps.newHashMap();
@@ -135,8 +132,11 @@ public class AnswerRecordController {
 		Long now = Instant.now().toEpochMilli();
 		List<String> rids = Lists.newArrayList();
 		values.forEach(value -> {
+			// 保存答案
 			String answ = (String) value.getOrDefault("answer", "");
+			// 保存user_id
 			String userId = (String) value.getOrDefault("user_id", "");
+			// 保存question_id
 			String questionId = (String) value.getOrDefault("question_id", "");
 			if (Strings.isNullOrEmpty(userId) || Strings.isNullOrEmpty(questionId)) {
 				return;
@@ -147,6 +147,7 @@ public class AnswerRecordController {
 			Float score = ((Number) value.getOrDefault("score", 0F)).floatValue();
 
 			String comment = (String) value.getOrDefault("comment", "");
+			// 这次任务Id
 			String taskId = (String) value.getOrDefault("task_id", "");
 			String chapterId = (String) value.getOrDefault("chapter_id", "");
 
@@ -195,6 +196,7 @@ public class AnswerRecordController {
 
 			//创建作答详情
 			AnswerRecord ar = new AnswerRecord();
+			// FIXME 2 保存答案
 			ar.setAnswer(answ);
 			ar.setQuestionId(questionId);
 			ar.setUserId(userId);
@@ -245,7 +247,6 @@ public class AnswerRecordController {
 		});
 		rids.forEach(rid -> {
 			AnswerRecord record = answerRecordService.findById(rid);
-			//答卷评分,停用JMS,使用多线程
 			addScoredQueue(record);
 		});
 		ret.put("code", CList.Api.Client.OK);
@@ -282,13 +283,14 @@ public class AnswerRecordController {
 	 * @param uid
 	 *            用户id
 	 */
-	@GetMapping(value = "/{qid}/answer/{uid}", produces = JSON_PRODUCES)
-	public Map<String, Object> getUserAnswer(@PathVariable String qid, @PathVariable String uid) {
+	@GetMapping(value = "/{qid}/answer/{uid}/{tid}", produces = JSON_PRODUCES)
+	public Map<String, Object> getUserAnswer(@PathVariable String qid, @PathVariable String uid,@PathVariable String tid) {
 		Map<String, Object> ret = Maps.newHashMap();
 		try {
 			AnswerRecord ar = new AnswerRecord();
 			ar.setQuestionId(qid);
 			ar.setUserId(uid);
+			ar.setTaskId(tid);
 			List<AnswerRecord> records = answerRecordService.getByConditions(ar);
 			if (null != records && !records.isEmpty()) {
 				AnswerRecord record = records.get(0);
@@ -406,6 +408,8 @@ public class AnswerRecordController {
 	 * @param uid
 	 *            用户id
 	 */
+
+	// FIXME 3 查询作答详细
 	@GetMapping(value = "/task_answers", produces = JSON_PRODUCES)
 	public Map<String, Object> getUserTaskAnswer(String taskId, String uid) {
 		Map<String, Object> ret = Maps.newHashMap();

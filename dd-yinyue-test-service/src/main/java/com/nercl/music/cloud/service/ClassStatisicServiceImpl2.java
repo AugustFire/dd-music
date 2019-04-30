@@ -307,9 +307,9 @@ public class ClassStatisicServiceImpl2 implements ClassStatisicService2 {
 				return null == score || score < 0 ? 0 : score.intValue();
 			}).sum());
 		});
-//		List<Map<String,Object>> list= students.stream().sorted( Comparator.comparingInt(s-> (Integer) s.getOrDefault("score",0))).collect(Collectors.toList());
-//        Collections.reverse(list);
-		return students;
+		List<Map<String,Object>> list= students.stream().sorted( Comparator.comparingInt(s-> (Integer) s.getOrDefault("score",0))).collect(Collectors.toList());
+        Collections.reverse(list);
+		return list;
 	}
 
 	@SuppressWarnings("unchecked")

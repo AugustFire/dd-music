@@ -1,26 +1,20 @@
 package com.nercl.music.cloud.service;
 
+import com.google.common.base.Strings;
+import com.nercl.music.cloud.entity.*;
+import com.nercl.music.constant.ApiClient;
+import com.nercl.music.util.CloudFileUtil;
+import com.nercl.music.util.StaffUtil;
+import org.apache.commons.io.FileUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
-
-import org.apache.commons.io.FileUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.jms.annotation.JmsListener;
-import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
-
-import com.google.common.base.Strings;
-import com.nercl.music.cloud.entity.Answer;
-import com.nercl.music.cloud.entity.AnswerRecord;
-import com.nercl.music.cloud.entity.PresentType;
-import com.nercl.music.cloud.entity.Question;
-import com.nercl.music.cloud.entity.QuestionType;
-import com.nercl.music.constant.ApiClient;
-import com.nercl.music.util.CloudFileUtil;
-import com.nercl.music.util.StaffUtil;
 
 @Component
 public class PendingScoredConsumer {
@@ -55,7 +49,7 @@ public class PendingScoredConsumer {
 	@Value("${dd-yinyue.creating.data}")
 	private String creating;
 
-	@JmsListener(destination = "short.pengding.scored.queue")
+
 	public void receiveShortPengdingScoreQueue(String text) {
 		System.out.println("-------------text:" + text);
 		if (Strings.isNullOrEmpty(text)) {
@@ -140,7 +134,6 @@ public class PendingScoredConsumer {
 	}
 
 	@SuppressWarnings("unchecked")
-	@JmsListener(destination = "sing.pengding.scored.queue")
 	public void receiveSingPengdingScoreQueue(String text) {
 		if (Strings.isNullOrEmpty(text)) {
 			return;
@@ -233,7 +226,6 @@ public class PendingScoredConsumer {
 //		tempAnswerFile.delete();
 	}
 
-	@JmsListener(destination = "creating.pengding.audioed.queue")
 	public void receiveCreatingPengdingAudioQueue(String text) {
 		if (Strings.isNullOrEmpty(text)) {
 			return;

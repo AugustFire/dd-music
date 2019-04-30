@@ -146,6 +146,12 @@ public class ExamPaperServiceImpl implements ExamPaperService {
 		es.forEach(exam -> {
 			papers.addAll(examPaperDao.getByExam(exam.getId()));
 		});
+
+		// 修改考试名称
+		for (int i = 0; i < exams.size(); i++) {
+			papers.get(i).setTitle(exams.get(i).getTitle());
+		}
+
 		return papers;
 	}
 

@@ -54,7 +54,7 @@ public class ApiClient {
 
 	public static final String GET_USER_QUESTION = ZUUL_HOST + "/test/question/{qid}?uid={uid}";
 
-	public static final String GET_USER_ANSWER = ZUUL_HOST + "/test/{qid}/answer/{uid}";
+	public static final String GET_USER_ANSWER = ZUUL_HOST + "/test/{qid}/answer/{uid}/{tid}";
 
 	public static final String GET_QUESTIONS = ZUUL_HOST + "/test/questions?ids={qids}";
 	

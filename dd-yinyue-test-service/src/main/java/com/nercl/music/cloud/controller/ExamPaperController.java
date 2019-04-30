@@ -664,6 +664,9 @@ public class ExamPaperController {
 	public Map<String, Object> autoMusicAbility(String examId, String title, Integer score, Integer resolvedTime,
 			Integer singleNum, Integer singleScore, Integer multiNum, Integer multiScore, Integer shortNum,
 			Integer shortScore, Float diffculty, String[] knowledge) {
+		for (String s : knowledge) {
+			System.out.println(s);
+		}
 		Map<String, Object> ret = Maps.newHashMap();
 		ExamPaper temp = examPaperService.getByExamAndPaperType(examId, ExamPaperType.MUSIC_ABILITY);
 		if (null != temp) {
@@ -729,7 +732,7 @@ public class ExamPaperController {
 				if (num < 1) {
 					ret.put("code", CList.Api.Client.LOGIC_ERROR);
 					ret.put("knowledge", k);
-					ret.put("desc", "has no questions in this knowledge");
+					ret.put("desc","@"+ k + "没有足够数量的题目");
 					return ret;
 				} else {
 					knowledges.put(k, num);
@@ -867,7 +870,7 @@ public class ExamPaperController {
 				if (num < 1) {
 					ret.put("code", CList.Api.Client.LOGIC_ERROR);
 					ret.put("knowledge", k);
-					ret.put("desc", "has no questions in this knowledge");
+					ret.put("desc","@"+ k + "没有足够数量的题目");
 					return ret;
 				} else {
 					knowledges.put(k, num);
