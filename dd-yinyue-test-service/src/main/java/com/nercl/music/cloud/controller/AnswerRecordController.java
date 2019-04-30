@@ -63,9 +63,6 @@ public class AnswerRecordController {
 	@Autowired
 	private QuestionToJsonUtil questionToJsonUtil;
 
-	@Autowired
-	private PendingScoredProducer pendingScoredProducer;
-
 	@GetMapping(value = "/answers", produces = JSON_PRODUCES)
 	public Map<String, Object> getAnswers(String qid, String classRoomId) {
 		Map<String, Object> ret = Maps.newHashMap();
@@ -250,7 +247,6 @@ public class AnswerRecordController {
 		});
 		rids.forEach(rid -> {
 			AnswerRecord record = answerRecordService.findById(rid);
-			//答卷评分,停用JMS,使用多线程
 			addScoredQueue(record);
 		});
 		ret.put("code", CList.Api.Client.OK);
