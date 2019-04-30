@@ -149,6 +149,7 @@ public class ResourceServiceImpl implements ResourceService {
 			save(sr);
 			rid = sr.getId();
 			break;
+		// FIXME 1
 		case RESOURCE: // 普通资源
 			Resource rs = new Resource();
 			rs.setCloudId(uuid);
