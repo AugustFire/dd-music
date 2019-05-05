@@ -129,7 +129,15 @@ public class QuestionController {
 		}
 		return ret;
 	}
-	//
+
+	/**
+	 *根据题目id和用户id查询题目详情和题目作答情况(是否提交,是否批阅)
+	 * @param qid
+	 * 		题目id
+	 * @param uid
+	 * 		用户id
+	 * @return
+	 */
 	@GetMapping(value = "/question/{qid}", produces = JSON_PRODUCES)
 	public Map<String, Object> get(@PathVariable String qid, String uid) {
 		Map<String, Object> ret = Maps.newHashMap();
@@ -158,8 +166,63 @@ public class QuestionController {
 			ret.put("is_marked", false);
 			ret.put("comment", null);
 		} else {
+			//如果有答案，是否提交为true，
+			// 答案中有题目得分或者有题目有评价，则是否批改为true
 			boolean anyMatch = records.stream()
-					.anyMatch(record -> null != record.getScore() || null != record.getComment()); // 如果有答案，是否提交为true，答案中有题目得分或者有题目有评价，则是否批改为true
+					.anyMatch(record -> null != record.getScore() || null != record.getComment());
+			ret.put("is_commited", true);
+			ret.put("is_marked", anyMatch);
+			ret.put("comment", records.stream().map(AnswerRecord::getComment).collect(Collectors.joining(",")));
+		}
+		ret.put("code", CList.Api.Client.OK);
+		ret.putAll(questionToJsonUtil.toJosn(question));
+		return ret;
+	}
+
+	/**
+	 *根据题目id和用户id,以及作业id查询对应题目详情和题目作答情况(是否提交,是否批阅)
+	 * @param qid
+	 * 		题目id
+	 * @param uid
+	 * 		用户id
+	 * @param tid
+	 * 		作业id
+	 * @return
+	 */
+	@GetMapping(value = "/question/{qid}", produces = JSON_PRODUCES)
+	public Map<String, Object> get(@PathVariable String qid, String uid,String tid) {
+		Map<String, Object> ret = Maps.newHashMap();
+		if (Strings.isNullOrEmpty(qid)) {
+			ret.put("code", CList.Api.Client.PROCESSING_FAILED);
+			ret.put("desc", "qid is null");
+			return ret;
+		}
+		Question question = questionService.get(qid);
+		if (null == question) {
+			ret.put("code", CList.Api.Client.PROCESSING_FAILED);
+			ret.put("desc", "question is null");
+			return ret;
+		}
+		AnswerRecord ar = new AnswerRecord();
+		ar.setUserId(uid);
+		ar.setQuestionId(qid);
+		ar.setTaskId(tid);
+		List<AnswerRecord> records = Lists.newArrayList();
+		try {
+			// 根据用户id和试题id以及作业id查询答案
+			records = answerRecordService.getByConditions(ar);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (null == records || records.isEmpty()) { // 如果没有答案，设置是否提交和是否批改都为false
+			ret.put("is_commited", false);
+			ret.put("is_marked", false);
+			ret.put("comment", null);
+		} else {
+			//如果有答案，是否提交为true，
+			// 答案中有题目得分或者有题目有评价，则是否批改为true
+			boolean anyMatch = records.stream()
+					.anyMatch(record -> null != record.getScore() || null != record.getComment());
 			ret.put("is_commited", true);
 			ret.put("is_marked", anyMatch);
 			ret.put("comment", records.stream().map(AnswerRecord::getComment).collect(Collectors.joining(",")));

@@ -12,6 +12,7 @@ import java.util.stream.IntStream;
 
 import javax.transaction.Transactional;
 
+import com.nercl.music.cloud.entity.*;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,14 +24,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
-import com.nercl.music.cloud.entity.AnswerRecord;
-import com.nercl.music.cloud.entity.AnswerSource;
-import com.nercl.music.cloud.entity.CompositeAbility;
-import com.nercl.music.cloud.entity.ExamPaper;
-import com.nercl.music.cloud.entity.Knowledge;
-import com.nercl.music.cloud.entity.Maluation;
-import com.nercl.music.cloud.entity.Question;
-import com.nercl.music.cloud.entity.QuestionType;
 import com.nercl.music.constant.ApiClient;
 import com.nercl.music.util.GraspValueUtil;
 import com.nercl.music.util.QuestionToJsonUtil;
@@ -616,6 +609,8 @@ public class ClassStatisicServiceImpl2 implements ClassStatisicService2 {
 		records.parallelStream().filter(record -> {
 			Question question = record.getQuestion();
 			return null != question && Strings.nullToEmpty(question.getKnowledges()).contains(knowledgeNo);
+			//添加对SubjectType科目类型GENERAL_KNOWLEDGE音乐素养题目的筛选
+//			return null != question && Strings.nullToEmpty(question.getKnowledges()).contains(knowledgeNo)&&question.getSubjectType().equals(SubjectType.GENERAL_KNOWLEDGE);
 		}).forEach(r -> {
 			Map<String, Object> map = json(r);
 			map.put("record_id", r.getId());

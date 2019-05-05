@@ -54,6 +54,9 @@ public class ApiClient {
 
 	public static final String GET_USER_QUESTION = ZUUL_HOST + "/test/question/{qid}?uid={uid}";
 
+	//根据题目id,用户id和作业id查询
+	public static final String GET_USER_TASK_QUESTION = ZUUL_HOST + "/test/question/{qid}?uid={userId}&tid={taskId}";
+
 	public static final String GET_USER_ANSWER = ZUUL_HOST + "/test/{qid}/answer/{uid}/{tid}";
 
 	public static final String GET_QUESTIONS = ZUUL_HOST + "/test/questions?ids={qids}";
@@ -67,6 +70,7 @@ public class ApiClient {
 	public static final String GET_TASK_ANSWER_DETAILS = ZUUL_HOST
 			+ "/test/task_answers_details?taskId={taskId}&uid={uid}";
 
+	//批阅学生作答
 	public static final String MARK_ANSWER = ZUUL_HOST + "/test/answer/{answerRecordId}?score={score}";
 
 	public static final String COMMIT_ANSWER = ZUUL_HOST + "/test/{taskId}/answers/{uid}";

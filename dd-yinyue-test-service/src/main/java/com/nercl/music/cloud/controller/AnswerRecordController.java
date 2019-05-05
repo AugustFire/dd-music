@@ -276,12 +276,14 @@ public class AnswerRecordController {
 	}
 
 	/**
-	 * 根据试题id、用户id查询用户作答情况
+	 * 根据试题id、用户id和作业id查询用户作答情况
 	 * 
 	 * @param qid
 	 *            试题id
 	 * @param uid
 	 *            用户id
+	 * @param tid
+	 * 			  作业id
 	 */
 	@GetMapping(value = "/{qid}/answer/{uid}/{tid}", produces = JSON_PRODUCES)
 	public Map<String, Object> getUserAnswer(@PathVariable String qid, @PathVariable String uid,@PathVariable String tid) {
@@ -331,6 +333,7 @@ public class AnswerRecordController {
 		}
 		answerRecord.setScore(score);
 		answerRecord.setComment(requestBody);
+		//缺少对实体表字段is_marked的修改
 		answerRecordService.update(answerRecord);
 		ret.put("code", CList.Api.Client.OK);
 		return ret;

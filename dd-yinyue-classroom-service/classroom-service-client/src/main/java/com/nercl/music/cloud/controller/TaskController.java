@@ -331,8 +331,10 @@ public class TaskController {
 			List<TaskQuestion> list = taskQuestionService.findByConditions(tq);
 			list.forEach(li -> {
 				Map<String, Object> questionAnswerMap = Maps.newHashMap();
-				// 根据问题Id
-				Map map = restTemplate.getForObject(ApiClient.GET_USER_QUESTION, Map.class, li.getQuestionId(), userId);
+				// 根据用户id和题目Id,查询题目详情和题目作答情况(是否提交,是否批阅)
+				//还需要提供作业id才能查询对应作业task题目的作答情况
+//				Map map = restTemplate.getForObject(ApiClient.GET_USER_QUESTION, Map.class, li.getQuestionId(), userId);
+				Map map = restTemplate.getForObject(ApiClient.GET_USER_TASK_QUESTION, Map.class, li.getQuestionId(), userId,taskId);
 				map.remove("code");
 				questionAnswerMap.put("question", map);
 				try {
@@ -382,6 +384,7 @@ public class TaskController {
 		HttpHeaders headers = new HttpHeaders(); // http请求头
 		headers.setContentType(MediaType.APPLICATION_JSON_UTF8); // 请求头设置属性
 		HttpEntity<String> requestEntity = new HttpEntity<String>(comment, headers); // comment字段内容可能很长（可能超出url长度限制）,所以一定要放在http请求的请求体里面
+		//批阅学生作答
 		restTemplate.put(ApiClient.MARK_ANSWER, requestEntity, answerRecordId, score); // score字段比较短,可以放在url上面
 		ret.put("code", CList.Api.Client.OK);
 		return ret;
