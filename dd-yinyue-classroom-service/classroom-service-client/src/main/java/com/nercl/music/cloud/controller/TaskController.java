@@ -153,7 +153,7 @@ public class TaskController {
 	}
 
 	/**
-	 * 新增题目
+	 * 指定作业新增题目
 	 */
 	@PostMapping(value = "/task/{tid}/questions", produces = JSON_PRODUCES)
 	public Map<String, Object> addQuestions(@PathVariable String tid, String[] qids) {
@@ -182,9 +182,9 @@ public class TaskController {
 	/**
 	 * 删除题目
 	 * 
-	 * @param qid
+	 * @param qids
 	 *            题目 Id
-	 * @param taskId
+	 * @param tid
 	 *            作业Id
 	 */
 	@DeleteMapping(value = "/task/{tid}/questions", produces = JSON_PRODUCES)
@@ -209,9 +209,7 @@ public class TaskController {
 	/**
 	 * 删除作业
 	 * 
-	 * @param qid
-	 *            题目 Id
-	 * @param taskId
+	 * @param tid
 	 *            作业Id
 	 */
 	@DeleteMapping(value = "/task/{tid}", produces = JSON_PRODUCES)
@@ -393,8 +391,6 @@ public class TaskController {
 	/**
 	 * 学生答题
 	 * 
-	 * @param uid
-	 *            学生id
 	 * @param answers
 	 *            <p>
 	 *            answers这个map中包含2个key-value对，key为“taskId”的字符串和key为“answers”的
@@ -488,7 +484,10 @@ public class TaskController {
 		}
 		PaginateSupportArray<Task> taskList = taskService.get(classroomId, chapterId, page, pageSize);
 		ClassRoom room = classRoomService.findById(classroomId);
-		int studentNum = classUserService.getStudentNum(room.getClassesId()); // 课堂中的学生人数
+//		int studentNum = classUserService.getStudentNum(room.getClassesId()); // 班级中的学生总人数
+		//获取加入课堂的学生集合
+		List<Map<String, Object>> students = classRoomUserRelationService.getJoinedStudents(room.getId());
+		int studentNum = students.size(); // 加入课堂的学生总人数
 		List<Map<String, Object>> taskInfoList = Lists.newArrayList();
 		taskList.forEach(task -> {
 			Map<String, Object> taskInfoMap = Maps.newHashMap();
@@ -764,6 +763,7 @@ public class TaskController {
 		}
 		Task task = taskService.findById(taskId);
 		ClassRoom classRoom = task.getClassRoom();
+		//获取加入课堂的学生集合
 		List<Map<String, Object>> students = classRoomUserRelationService.getJoinedStudents(classRoom.getId());
 		if (students == null || students.isEmpty()) {
 			ret.put("users", null);

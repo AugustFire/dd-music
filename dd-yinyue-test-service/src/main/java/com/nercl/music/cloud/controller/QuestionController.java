@@ -189,8 +189,8 @@ public class QuestionController {
 	 * 		作业id
 	 * @return
 	 */
-	@GetMapping(value = "/question/{qid}", produces = JSON_PRODUCES)
-	public Map<String, Object> get(@PathVariable String qid, String uid,String tid) {
+	@GetMapping(value = "/v2/question/{qid}", produces = JSON_PRODUCES)
+	public Map<String, Object> getV2(@PathVariable String qid, String uid,String tid) {
 		Map<String, Object> ret = Maps.newHashMap();
 		if (Strings.isNullOrEmpty(qid)) {
 			ret.put("code", CList.Api.Client.PROCESSING_FAILED);
@@ -209,7 +209,7 @@ public class QuestionController {
 		ar.setTaskId(tid);
 		List<AnswerRecord> records = Lists.newArrayList();
 		try {
-			// 根据用户id和试题id以及作业id查询答案
+			// 根据用户id和试题id以及作业id查询学生作答记录
 			records = answerRecordService.getByConditions(ar);
 		} catch (Exception e) {
 			e.printStackTrace();
