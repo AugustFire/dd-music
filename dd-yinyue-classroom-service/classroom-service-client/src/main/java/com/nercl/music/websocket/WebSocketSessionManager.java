@@ -88,7 +88,7 @@ public class WebSocketSessionManager {
 	public void sendUserJoinedNotice(String roomCode, String roomId, String studentId, String name, String gender,
 			String photo) {
 		YinYueWebSocketSession teacherSocket = getTeacherSession(roomCode);
-		if (null != teacherSocket) {
+		if (null != teacherSocket && teacherSocket.getSession().isOpen()) {
 			teacherSocket.sendUserJoinedNotice(studentId, name, gender, photo);
 		}
 	}
