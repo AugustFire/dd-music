@@ -17,6 +17,4 @@
 
 调整为:
 
-e:/dd-yinyue-log/${ProjectName}/info
-e:/dd-yinyue-log/${ProjectName}/debug
-e:/dd-yinyue-log/${ProjectName}/logs
+\data0\app\logs\dd-yinyue\${project-name}
