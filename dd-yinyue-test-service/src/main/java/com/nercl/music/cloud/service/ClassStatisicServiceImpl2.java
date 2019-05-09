@@ -608,9 +608,9 @@ public class ClassStatisicServiceImpl2 implements ClassStatisicService2 {
 		//并行执行流,过滤筛选出question不为空,以及question中knowledges属性字符串是否包含knowledgeNo对应的值
 		records.parallelStream().filter(record -> {
 			Question question = record.getQuestion();
-			return null != question && Strings.nullToEmpty(question.getKnowledges()).contains(knowledgeNo);
-			//添加对SubjectType科目类型GENERAL_KNOWLEDGE音乐素养题目的筛选
-//			return null != question && Strings.nullToEmpty(question.getKnowledges()).contains(knowledgeNo)&&question.getSubjectType().equals(SubjectType.GENERAL_KNOWLEDGE);
+//			return null != question && Strings.nullToEmpty(question.getKnowledges()).contains(knowledgeNo);
+			//因为全局只有一处调用该方法,所以根据前端测试综合测评 -> 音乐知识 只显示音乐常识和乐理类型的需求,现在将其改为只包含音乐常识和乐理类型
+			return null != question && Strings.nullToEmpty(question.getKnowledges()).contains(knowledgeNo)&&(SubjectType.GENERAL_KNOWLEDGE.equals(question.getSubjectType())||SubjectType.THEORY.equals(question.getSubjectType()));
 		}).forEach(r -> {
 			Map<String, Object> map = json(r);
 			map.put("record_id", r.getId());
