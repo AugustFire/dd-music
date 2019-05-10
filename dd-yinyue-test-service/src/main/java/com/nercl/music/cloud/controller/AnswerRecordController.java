@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.alibaba.fastjson.JSON;
 import com.nercl.music.cloud.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -265,6 +266,7 @@ public class AnswerRecordController {
 		if (null == question) {
 			return;
 		}
+		//简单题
 		if (QuestionType.SHORT_ANSWER == question.getQuestionType()) {
 //			pendingScoredProducer.sendShortScoredMessage(answerRecord.getId());
 			consumer.receiveShortPengdingScoreQueue(answerRecord.getId());
@@ -273,6 +275,161 @@ public class AnswerRecordController {
 //			pendingScoredProducer.sendSingScoredMessage(answerRecord.getId());
 			consumer.receiveSingPengdingScoreQueue(answerRecord.getId());
 		}
+	}
+
+	/**
+	 * 保存指定作业,指定学生的作答情况,保存答案的方法直接使用了当前原有save(String answer)的基本方法
+	 */
+	@PostMapping(value ="/{taskId}/answers/{uid}",produces = JSON_PRODUCES)
+	public Map<String, Object> saveAnswers(@PathVariable String taskId, @PathVariable String uid,@RequestBody String requestBody){
+		Map<String, Object> ret = Maps.newHashMap();
+		//判断taskId参数是否为空
+		if (Strings.isNullOrEmpty(taskId)) {
+			ret.put("code", CList.Api.Client.PROCESSING_FAILED);
+			ret.put("desc", "taskId is null");
+			return ret;
+		}
+		//判断uid参数是否为空
+		if (Strings.isNullOrEmpty(uid)) {
+			ret.put("code", CList.Api.Client.PROCESSING_FAILED);
+			ret.put("desc", "uid is null");
+			return ret;
+		}
+		Map<String, Object> body= (Map<String, Object>) JSON.parse(requestBody);
+		List answersList = (List) body.get("answersList");//答题列表
+		String answerSource = (String) body.get("answerSource");//答题来源
+		//判断答题列表是否为空
+		if (null == answersList || answersList.isEmpty()) {
+			ret.put("code", CList.Api.Client.PROCESSING_FAILED);
+			ret.put("desc", "answersList is null");
+			return ret;
+		}
+		//遍历答题列表
+		for (Object answer : answersList) {
+			List<Map<String, Object>> values = gson.fromJson((String) answer, List.class);
+			if (null == values || values.isEmpty()) {
+				continue;//当前答题为空,执行下一个循环
+			}
+			Map<String, Object> v = values.get(0);
+//			String uid = (String) v.getOrDefault("user_id", "");
+			String pid = (String) v.getOrDefault("exam_paper_id", "");//考卷id
+			Long now = Instant.now().toEpochMilli();//当前时间毫秒值
+			List<String> rids = Lists.newArrayList();
+			for (Map<String, Object> value : values) {
+				String answ = (String) value.getOrDefault("answer", "");//答案
+				String userId = uid;
+				String questionId = (String) value.getOrDefault("question_id", "");//题目id
+				if (Strings.isNullOrEmpty(userId) || Strings.isNullOrEmpty(questionId)) {
+					continue;
+				}
+				String resourceId = (String) value.getOrDefault("resource_id", "");//资源id
+				String roomId = (String) value.getOrDefault("room_id", "");//课堂id
+				Float score = ((Number) value.getOrDefault("score", 0F)).floatValue();//分数
+				String comment = (String) value.getOrDefault("comment", "");//评语
+				String chapterId = (String) value.getOrDefault("chapter_id", "");//章节
+				String examId = (String) value.getOrDefault("exam_id", "");//考试id
+				String examPaperId = (String) value.getOrDefault("exam_paper_id", "");//考卷id
+				Integer tempo = ((Number) value.getOrDefault("tempo", 0)).intValue();//时间戳
+				Float fullScore = null;
+				if (!Strings.isNullOrEmpty(examPaperId)) {
+					fullScore = examPaperQuestionService.getScore(examPaperId, questionId).floatValue(); // 查询题目分数
+				}
+				Boolean isTrue = false;//是否为正确答案
+				Question question = questionService.get(questionId);
+				//判断Question是否为存在
+				if (null==question) {
+					continue;
+				}
+				//题目如果是单选题
+				if (QuestionType.SINGLE_SELECT.equals(question.getQuestionType())) {
+					List<Option> options = optionService.getByQuestion(question.getId());
+					if (null != options && !options.isEmpty()) {
+						isTrue = options.stream().anyMatch(option -> option.isTrue() && option.getValue().equals(answ));
+					}
+				}
+				//题目如果是多选题
+				if (QuestionType.MULTI_SELECT.equals(question.getQuestionType())) {
+					List<Option> options = optionService.getByQuestion(question.getId());
+					if (null != options && !options.isEmpty() && !Strings.isNullOrEmpty(answ)) {
+						List<String> ans = Splitter.on(",").splitToList(answ);
+						boolean rightNumber = options.stream().filter(option -> option.isTrue()).count() == ans.size();
+						isTrue = rightNumber && options.stream().filter(option -> option.isTrue())
+								.allMatch(option -> ans.contains(option.getValue()));
+					}
+				}
+				//题目是否是选择题
+				if (question.isSelectQuestion()) {
+					if (String.valueOf(AnswerSource.TASK).equals(answerSource)
+							|| String.valueOf(AnswerSource.CHAPTER_TEST).equals(answerSource)
+							|| String.valueOf(AnswerSource.MIDDLE_TERM_TEST).equals(answerSource)
+							|| String.valueOf(AnswerSource.FINAL_TERM_TEST).equals(answerSource)
+							|| String.valueOf(AnswerSource.OTHER).equals(answerSource)) {
+						if (isTrue) {
+							//答题正确
+							score = fullScore;
+						} else {
+							score = 0F;
+						}
+					}
+				}
+				//创建作答详情
+				AnswerRecord ar = new AnswerRecord();
+				// FIXME 2 保存答案
+				ar.setAnswer(answ);
+				ar.setQuestionId(questionId);
+				ar.setUserId(userId);
+				ar.setResourceId(resourceId);
+				ar.setClassRoomId(roomId);
+				ar.setTimestamp(now);
+				ar.setIsTrue(isTrue);
+				ar.setScore(score);
+				ar.setFullScore(fullScore);
+				ar.setComment(comment);
+				ar.setTaskId(taskId);
+				ar.setChapterId(chapterId);
+				ar.setExamId(Strings.emptyToNull(examId));
+				ar.setExamPaperId(Strings.emptyToNull(examPaperId));
+				if (!Strings.isNullOrEmpty(answerSource)) {
+					ar.setAnswerSource(AnswerSource.valueOf(answerSource));
+				}
+				ar.setTempo(tempo);
+				//考生信息
+				Map<String, Object> classes = restTemplate.getForObject(ApiClient.GET_CLASS_USER, Map.class, userId);
+				if (null != classes) {
+					ar.setSchoolId((String) classes.getOrDefault("school_id", ""));//学校
+					ar.setSchoolName((String) classes.getOrDefault("school_name", ""));
+					if (null != classes.get("classes")) {//班级
+						List<Map<String, String>> cls = (List<Map<String, String>>) classes.get("classes");
+						ar.setClassId((String) cls.get(0).getOrDefault("class_id", ""));
+						ar.setClassName((String) cls.get(0).getOrDefault("class_name", ""));
+					}
+					if (null != classes.get("grades")) {//年纪
+						List<Map<String, String>> grades = (List<Map<String, String>>) classes.get("grades");
+						ar.setGradeId((String) grades.get(0).getOrDefault("grade_id", ""));
+						ar.setGradeName((String) grades.get(0).getOrDefault("grade_name", ""));
+					}
+				}
+
+				String rid = answerRecordService.save(ar);//主键返回,生成的answerRecord的id
+				if (!Strings.isNullOrEmpty(rid)) {
+					rids.add(rid);
+				}
+
+				if (!Strings.isNullOrEmpty(roomId) && !Strings.isNullOrEmpty(userId) && !Strings.isNullOrEmpty((String) answer)
+						&& String.valueOf(AnswerSource.EXERCISE).equals(answerSource)) {
+					restTemplate.getForObject(ApiClient.ANSWER_NOTICE, Map.class, roomId, userId, answer);
+				}
+			}
+			rids.forEach(rid -> {
+				AnswerRecord record = answerRecordService.findById(rid);
+				addScoredQueue(record);
+			});
+			ret.put("code", CList.Api.Client.OK);
+			return ret;
+		}
+
+
+		return null;
 	}
 
 	/**

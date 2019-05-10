@@ -50,6 +50,10 @@ public class PendingScoredConsumer {
 	private String creating;
 
 
+	/**
+	 * 根据简答题的answerRecord的ID
+	 * @param text
+	 */
 	public void receiveShortPengdingScoreQueue(String text) {
 		System.out.println("-------------text:" + text);
 		if (Strings.isNullOrEmpty(text)) {
@@ -69,6 +73,7 @@ public class PendingScoredConsumer {
 			return;
 		}
 		PresentType presentType = record.getQuestion().getPresentType();
+		//参考答案的resourceID
 		String rid = answer.getResource();
 		if (Strings.isNullOrEmpty(rid)) {
 			return;
@@ -91,6 +96,7 @@ public class PendingScoredConsumer {
 		if (!tempStandardAnswerFile.exists()) {
 			return;
 		}
+		//作答记录的resourceID
 		rid = record.getResourceId();
 		if (Strings.isNullOrEmpty(rid)) {
 			record.setScore(0f);
@@ -115,6 +121,7 @@ public class PendingScoredConsumer {
 		if (!tempAnswerFile.exists()) {
 			return;
 		}
+		//图片类简单题答案分数百分比?
 		Float percent = staffUtil.getShortAnswerScore(tempStandardAnswerFile.getPath(), tempAnswerFile.getPath(),
 				String.valueOf(presentType));
 		System.out.println("------------percent:" + percent);

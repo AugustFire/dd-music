@@ -868,6 +868,11 @@ public class ClassStatisicServiceImpl2 implements ClassStatisicService2 {
 		data.put("notes", ns);
 	}
 
+	/**
+	 * 通过班级ID获取学生
+	 * @param classId
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	private int getStudentNum(String classId) {
 		Map<String, Object> ret = restTemplate.getForObject(ApiClient.GET_CLASSSTUDENT_NUM, Map.class, classId);

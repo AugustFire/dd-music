@@ -434,6 +434,7 @@ public class TaskController {
 			ret.put("desc", "answers is null");
 			return ret;
 		}
+		//查询学生信息
 		List<ClassUser> classUser = Lists.newArrayList();
 		ClassUser cs = new ClassUser();
 		cs.setUserId(uid);
@@ -450,9 +451,9 @@ public class TaskController {
 		headers.setContentType(MediaType.APPLICATION_JSON_UTF8); // 请求头设置属性
 		Map<String, Object> body = Maps.newHashMap();
 		body.put("answersList", answersList);
-		body.put("classUser", classUser);
+		//body.put("classUser", classUser);//考生信息
 		body.put("answerSource", "TASK");
-		body.put("fullScore", "100");
+		//body.put("fullScore", "100");
 		HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<Map<String, Object>>(body, headers);
 		restTemplate.postForObject(ApiClient.COMMIT_ANSWER, requestEntity, Map.class, taskId, uid);
 		ret.put("code", CList.Api.Client.OK);
