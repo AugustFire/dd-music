@@ -163,6 +163,12 @@ public class ClassRoomController {
 		return ret;
 	}
 
+	/**
+	 * 根据用户ID和年级ID查询课堂教室
+	 * @param uid
+	 * @param gid
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	@GetMapping(value = "/classrooms", params = { "uid" }, produces = JSON_PRODUCES)
 	public Map<String, Object> getClassRooms(@RequestParam(value = "uid") String uid, String gid) {

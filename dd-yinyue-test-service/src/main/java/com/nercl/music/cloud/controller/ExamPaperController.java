@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.nercl.music.cloud.service.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,12 +45,6 @@ import com.nercl.music.cloud.entity.ExamPaperType;
 import com.nercl.music.cloud.entity.Option;
 import com.nercl.music.cloud.entity.Question;
 import com.nercl.music.cloud.entity.QuestionType;
-import com.nercl.music.cloud.service.AnswerRecordService;
-import com.nercl.music.cloud.service.ExamPaperQuestionService;
-import com.nercl.music.cloud.service.ExamPaperService;
-import com.nercl.music.cloud.service.ExamService;
-import com.nercl.music.cloud.service.OptionService;
-import com.nercl.music.cloud.service.QuestionService;
 import com.nercl.music.constant.ApiClient;
 import com.nercl.music.constant.CList;
 import com.nercl.music.util.CloudFileUtil;
@@ -235,7 +230,7 @@ public class ExamPaperController {
 	}
 
 	/**
-	 * 清空某个人的试题篮的信息
+	 * 清空指定试卷的试题篮的信息
 	 * @param id
 	 * @return
 	 */
@@ -304,7 +299,7 @@ public class ExamPaperController {
 	}
 
 	/**
-	 * 添加一个试题篮
+	 * 给未完成组卷的试卷添加一个试题篮
 	 * @param uid
 	 * @param eid
 	 * @param examPaperType
@@ -1011,6 +1006,9 @@ public class ExamPaperController {
 		return ret;
 	}
 
+	@Autowired
+	private ClassStatisicService2 classStatisicService;
+
 	@GetMapping(value = "/exam_paper/{pid}/average_score", produces = JSON_PRODUCES)
 	public Map<String, Object> getAverageScore(@PathVariable String pid, String classId) {
 		Map<String, Object> ret = Maps.newHashMap();
@@ -1024,7 +1022,22 @@ public class ExamPaperController {
 			ret.put("desc", "classId is null");
 			return ret;
 		}
-		Integer score = answerRecordService.getAverageScore(pid, classId);
+//		Integer score = answerRecordService.getAverageScore(pid, classId);
+		Integer score =0;
+		List<Map<String, Object>> examUserScore = classStatisicService.getExamUserScore(classId, pid);
+		Integer num=0;//提交答案的人数
+		for (Map<String, Object> map : examUserScore) {
+			score+= (int) map.get("score");
+			Boolean joined_exam = (Boolean) map.get("joined_exam");
+			if (joined_exam){
+				num++;
+			}
+		}
+		if (examUserScore!=null && examUserScore.size() >0 && num>0){
+			score=score/num;
+		}else {
+			score=0;
+		}
 		ret.put("code", CList.Api.Client.OK);
 		ret.put("score", score);
 		return ret;
@@ -1098,6 +1111,14 @@ public class ExamPaperController {
 		}
 	}
 
+	/**
+	 * 压缩试题文件
+	 * @param zipFile
+	 * @param examPaperFolderPath
+	 * @param path
+	 * @param updateAt
+	 * @throws IOException
+	 */
 	private void zip(File zipFile, String examPaperFolderPath, Path path, Long updateAt) throws IOException {
 		zipFileUtil.zipFile(zipFile, examPaperFolderPath);
 		FileTime fileTime = FileTime.fromMillis(updateAt);

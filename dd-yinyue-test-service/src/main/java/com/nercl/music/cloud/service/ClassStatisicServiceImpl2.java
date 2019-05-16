@@ -1,12 +1,7 @@
 package com.nercl.music.cloud.service;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -294,6 +289,16 @@ public class ClassStatisicServiceImpl2 implements ClassStatisicService2 {
 				student.put("joined_exam", false);
 				return;
 			}
+
+			//根据questionID去重,因为同一个学生,同一张试卷,题目是不重复的
+			rs = rs.stream().distinct().collect(Collectors.toList());
+			Map<String,AnswerRecord> map=new HashMap<>();
+			for (AnswerRecord r : rs) {
+				map.put(r.getQuestionId(),r);
+			}
+			rs.clear();
+			rs.addAll(map.values());
+
 			student.put("joined_exam", true);
 			student.put("score", rs.parallelStream().mapToInt(r -> {
 				Float score = r.getScore();

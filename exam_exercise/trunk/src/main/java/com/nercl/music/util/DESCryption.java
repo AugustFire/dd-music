@@ -72,7 +72,7 @@ public class DESCryption {
 			value = new String(pasByte, "UTF-8");
 		} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException
 		        | InvalidAlgorithmParameterException | UnsupportedEncodingException | IllegalBlockSizeException
-		        | BadPaddingException e) {
+		        | BadPaddingException | IllegalArgumentException e) {//IllegalArgumentException,非法参数异常,未加密的数据进行解密会报这种异常
 			e.printStackTrace();
 		}
 		return value;
