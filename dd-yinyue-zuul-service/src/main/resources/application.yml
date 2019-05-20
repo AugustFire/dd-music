@@ -64,3 +64,19 @@ logging:
   level.org.springframework.security: DEBUG
 
     
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds:1200000
+
+#ribbon timeout setting (not less than hystrix time out)
+ribbon:
+  ConnectTimeout:1200000
+  ReadTimeout:1200000
+
+feign:
+  hystrix:
+    enabled: true
