@@ -64,6 +64,12 @@ public class AnswerRecordController {
 	@Autowired
 	private QuestionToJsonUtil questionToJsonUtil;
 
+	/**
+	 * 获取某个教室下所有的
+	 * @param qid
+	 * @param classRoomId
+	 * @return
+	 */
 	@GetMapping(value = "/answers", produces = JSON_PRODUCES)
 	public Map<String, Object> getAnswers(String qid, String classRoomId) {
 		Map<String, Object> ret = Maps.newHashMap();
@@ -114,7 +120,11 @@ public class AnswerRecordController {
 			ret.put("desc", "answer is null");
 			return ret;
 		}
+
+		//传参 list<Answer>
 		Map<String, Object> v = values.get(0);
+		//取出第一个来获取userId和examPaperId
+
 		String uid = (String) v.getOrDefault("user_id", "");
 		String pid = (String) v.getOrDefault("exam_paper_id", "");
 		if (Strings.isNullOrEmpty(uid)) {
@@ -132,6 +142,8 @@ public class AnswerRecordController {
 		}
 		Long now = Instant.now().toEpochMilli();
 		List<String> rids = Lists.newArrayList();
+
+		//foreach
 		values.forEach(value -> {
 			// 保存答案
 			String answ = (String) value.getOrDefault("answer", "");
@@ -150,6 +162,8 @@ public class AnswerRecordController {
 			String comment = (String) value.getOrDefault("comment", "");
 			// 这次任务Id
 			String taskId = (String) value.getOrDefault("task_id", "");
+
+			// 章节Id
 			String chapterId = (String) value.getOrDefault("chapter_id", "");
 
 			String examId = (String) value.getOrDefault("exam_id", "");
@@ -158,12 +172,15 @@ public class AnswerRecordController {
 
 			Integer tempo = ((Number) value.getOrDefault("tempo", 0)).intValue();
 
+			//获取该次考试下 这个试题设置的满分是多少
 			Float fullScore = null;
 			if (!Strings.isNullOrEmpty(examPaperId)) {
 				fullScore = examPaperQuestionService.getScore(examPaperId, questionId).floatValue(); // 查询题目分数
 			}
 			Boolean isTrue = false;
 			Question question = questionService.get(questionId);
+
+			//单选题
 			if (QuestionType.SINGLE_SELECT.equals(question.getQuestionType())) {
 				List<Option> options = optionService.getByQuestion(question.getId());
 				if (null != options && !options.isEmpty()) {
@@ -171,6 +188,7 @@ public class AnswerRecordController {
 				}
 			}
 
+			//多选题
 			if (QuestionType.MULTI_SELECT.equals(question.getQuestionType())) {
 				List<Option> options = optionService.getByQuestion(question.getId());
 				if (null != options && !options.isEmpty() && !Strings.isNullOrEmpty(answ)) {
@@ -257,6 +275,10 @@ public class AnswerRecordController {
 	@Autowired
 	private PendingScoredConsumer consumer;
 
+	/**
+	 *
+	 * @param answerRecord 作答记录
+	 */
 	@Async
 	void addScoredQueue(AnswerRecord answerRecord) {
 		if (null == answerRecord) {
@@ -266,11 +288,13 @@ public class AnswerRecordController {
 		if (null == question) {
 			return;
 		}
-		//简单题
+		//简答题
 		if (QuestionType.SHORT_ANSWER == question.getQuestionType()) {
 //			pendingScoredProducer.sendShortScoredMessage(answerRecord.getId());
 			consumer.receiveShortPengdingScoreQueue(answerRecord.getId());
 		}
+
+		//除选择题/简答题以外的题目
 		if (question.isSingQuestion()) {
 //			pendingScoredProducer.sendSingScoredMessage(answerRecord.getId());
 			consumer.receiveSingPengdingScoreQueue(answerRecord.getId());

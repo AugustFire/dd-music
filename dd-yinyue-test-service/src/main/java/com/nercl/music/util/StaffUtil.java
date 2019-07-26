@@ -56,6 +56,7 @@ public class StaffUtil {
 		return result;
 	}
 
+	//获取简答题答案
 	public Float getShortAnswerScore(String standarAnswer, String answer, String presentType) {
 		int result = 0;
 		Process process = null;

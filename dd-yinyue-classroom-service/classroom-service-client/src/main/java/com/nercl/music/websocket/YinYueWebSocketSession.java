@@ -43,13 +43,6 @@ public class YinYueWebSocketSession {
 		return !Strings.isNullOrEmpty(teacherId) && !Strings.isNullOrEmpty(userId) && teacherId.equals(userId);
 	}
 
-	public void close() {
-		try {
-			this.session.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
 
 	public void sendDownloadFileNotice(String uuid, String senderId, String senderName, String fileName, Long size,
 			String messageType) {

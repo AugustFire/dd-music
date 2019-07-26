@@ -85,6 +85,7 @@ public class QuestionParser {
 				}
 			});
 		}
+		//stop the world
 		List<Map<String, Object>> questiongroups = gson.fromJson(json, List.class);
 		if (null != questiongroups && !questiongroups.isEmpty()) {
 			questiongroups.forEach(group -> {
@@ -149,6 +150,11 @@ public class QuestionParser {
 		answerService.save(answer);
 	}
 
+	/**
+	 *
+	 * @param q 新的问题
+	 * @param map 接受对象
+	 */
 	private void setQuestion(Question q, Map<String, Object> map) {
 		String title = (String) map.getOrDefault("title", "");
 		q.setTitle(title);
@@ -191,7 +197,7 @@ public class QuestionParser {
 			q.setPresentType(PresentType.valueOf(presentType));
 		}
 
-		Float difficulty = ((Number) (Double) map.getOrDefault("difficulty", 0)).floatValue();
+		Float difficulty = ((Number) map.getOrDefault("difficulty", 0)).floatValue();
 		q.setDifficulty(difficulty);
 
 		boolean isNumbered = (boolean) map.getOrDefault("is_numbered", false);

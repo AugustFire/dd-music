@@ -68,6 +68,8 @@ public class PendingScoredConsumer {
 		if (null == question || QuestionType.SHORT_ANSWER != question.getQuestionType()) {
 			return;
 		}
+
+		//简答题答案
 		Answer answer = answerService.getByQuestion(record.getQuestionId());
 		if (null == answer) {
 			return;
@@ -87,6 +89,7 @@ public class PendingScoredConsumer {
 		if (null == is) {
 			return;
 		}
+		//参考答案临时文件
 		File tempStandardAnswerFile = new File(tempStandardAnswer + File.separator + rid + "." + ext);
 		try {
 			FileUtils.copyInputStreamToFile(is, tempStandardAnswerFile);
@@ -132,6 +135,7 @@ public class PendingScoredConsumer {
 
 		File imgFile = new File(img + File.separator + text + ".png");
 		if (!imgFile.exists()) {
+			//获取标准答案的图片(XML -> PNG)
 			staffUtil.getStaffPic(tempStandardAnswerFile.getPath(), imgFile.getPath());
 		}
 
@@ -140,6 +144,7 @@ public class PendingScoredConsumer {
 
 	}
 
+	//text -> 作答记录Id
 	@SuppressWarnings("unchecked")
 	public void receiveSingPengdingScoreQueue(String text) {
 		if (Strings.isNullOrEmpty(text)) {
@@ -233,7 +238,7 @@ public class PendingScoredConsumer {
 //		tempAnswerFile.delete();
 	}
 
-	public void receiveCreatingPengdingAudioQueue(String text) {
+/*	public void receiveCreatingPengdingAudioQueue(String text) {
 		if (Strings.isNullOrEmpty(text)) {
 			return;
 		}
@@ -280,6 +285,6 @@ public class PendingScoredConsumer {
 		}
 		staffUtil.getCreatingAudio(tempAnswerFile.getPath(), audio.getPath());
 		tempAnswerFile.delete();
-	}
+	}*/
 
 }
