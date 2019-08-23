@@ -179,7 +179,7 @@ public class ResourceController {
 		OutputStream to = null;
 		
 		try {
-			String fileName =  URLEncoder.encode(r.getName(), "utf-8");
+			String fileName =  URLEncoder.encode(r.getCloudId(), "utf-8")+"."+r.getExt();
 			  response.setContentType(getContentType(ext) + ";charset=UTF-8");
 			  response.addHeader("Content-Disposition", "filename="+ fileName);
 			response.setContentType("application/force-download");
